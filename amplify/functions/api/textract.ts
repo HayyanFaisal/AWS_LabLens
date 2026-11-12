@@ -87,6 +87,7 @@ export function friendlyTextractError(err: unknown): string {
     ProvisionedThroughputExceededException: 'Textract is busy right now. Please try again in a moment.',
     ThrottlingException: 'Textract is busy right now. Please try again in a moment.',
     AccessDeniedException: 'The API is not allowed to call Textract (check the Lambda IAM role).',
+    SubscriptionRequiredException: 'Textract is not enabled on this AWS account yet (the Free plan does not include it).',
   };
   return map[name] ?? (err instanceof Error ? err.message : 'Textract failed');
 }

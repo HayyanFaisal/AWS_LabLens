@@ -28,8 +28,12 @@ const FILE_URL_SECONDS = 15 * 60;
 /** Fields returned by GET /reports (the list view does not need every test). */
 const SUMMARY_FIELDS = [
   'reportId', 'fileName', 'patientName', 'labName', 'reportDate', 'pages', 'mode',
-  '#status', 'errorMessage', 'testCount', 'abnormalCount', 'createdAt',
+  'status', 'errorMessage', 'testCount', 'abnormalCount', 'createdAt',
 ];
+// Several of these ("status", "mode", ...) are DynamoDB reserved words, so every
+// field goes through a placeholder: ProjectionExpression "#f0, #f1, ..."
+const SUMMARY_PROJECTION = SUMMARY_FIELDS.map((_, i) => `#f${i}`).join(', ');
+const SUMMARY_NAMES = Object.fromEntries(SUMMARY_FIELDS.map((f, i) => [`#f${i}`, f]));
 
 /** Time-ordered, URL-safe id, e.g. "20261113T101530123-a1b2c3". */
 const newReportId = () =>
@@ -113,7 +117,10 @@ export async function analyzeReport(username: string, body: Record<string, unkno
     result = parseTextract(blocks, mode);
   } catch (err) {
     console.error('Textract failed:', (err as Error).name, (err as Error).message);
-    const failed = { ...base, status: 'FAILED', errorMessage: friendlyTextractError(err), textractMs: Date.now() - t0 };
+    const failed = {
+      ...base, status: 'FAILED', errorMessage: friendlyTextractError(err), textractMs: Date.now() - t0,
+      reportDate: createdAt.slice(0, 10), testCount: 0, abnormalCount: 0,
+    };
     await save(failed);
     return failed;
   }
@@ -166,8 +173,8 @@ export async function listReports(username: string) {
         TableName: env.reportsTable(),
         KeyConditionExpression: 'username = :u',
         ExpressionAttributeValues: { ':u': username },
-        ProjectionExpression: SUMMARY_FIELDS.join(', '),
-        ExpressionAttributeNames: { '#status': 'status' }, // "status" is a DynamoDB reserved word
+        ProjectionExpression: SUMMARY_PROJECTION,
+        ExpressionAttributeNames: SUMMARY_NAMES,
         ScanIndexForward: false, // newest first
         ExclusiveStartKey,
       }),
