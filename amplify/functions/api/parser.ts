@@ -297,13 +297,17 @@ function rowToTest(
   };
 }
 
-// ---------- main entry ----------
+// ---------- queries ----------
 
-export function parseTextract(blocks: TBlock[], mode: string): ExtractionResult {
-  const index = new Map<string, TBlock>();
-  for (const b of blocks) if (b.Id) index.set(b.Id, b);
-
-  // 1) Queries -> patient name, dates, lab name
+/**
+ * Collects Textract Queries results: each QUERY block points (via an ANSWER
+ * relationship) to QUERY_RESULT blocks; we keep the most confident answer.
+ * Also used for ID cards (idcard.ts).
+ */
+export function readQueries(
+  blocks: TBlock[],
+  index: Map<string, TBlock> = new Map(blocks.filter((b) => b.Id).map((b) => [b.Id!, b])),
+): { answers: Record<string, QueryAnswer>; queryAnswers: QueryAnswer[] } {
   const answers: Record<string, QueryAnswer> = {};
   const queryAnswers: QueryAnswer[] = [];
   for (const q of blocks.filter((b) => b.BlockType === 'QUERY')) {
@@ -319,6 +323,17 @@ export function parseTextract(blocks: TBlock[], mode: string): ExtractionResult 
     queryAnswers.push(qa);
     if (q.Query?.Alias) answers[q.Query.Alias] = qa;
   }
+  return { answers, queryAnswers };
+}
+
+// ---------- main entry ----------
+
+export function parseTextract(blocks: TBlock[], mode: string): ExtractionResult {
+  const index = new Map<string, TBlock>();
+  for (const b of blocks) if (b.Id) index.set(b.Id, b);
+
+  // 1) Queries -> patient name, dates, lab name
+  const { answers, queryAnswers } = readQueries(blocks, index);
 
   // 2) Tables -> test results
   const tests: ExtractedTest[] = [];

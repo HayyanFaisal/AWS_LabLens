@@ -12,6 +12,7 @@ import { verifyToken } from './auth';
 import { env } from './aws';
 import { HttpError, json, parseBody } from './http';
 import { login, register } from './users';
+import { createIdUploadUrl, getProfile, saveProfile, scanIdCard } from './profile';
 import {
   analyzeReport,
   createUploadUrl,
@@ -39,6 +40,10 @@ const routes: Route[] = [
   { method: 'POST', path: /^\/auth\/register$/, auth: false, status: 201, run: (c) => register(c.body) },
   { method: 'POST', path: /^\/auth\/login$/, auth: false, run: (c) => login(c.body) },
   { method: 'GET', path: /^\/auth\/me$/, auth: true, run: async (c) => ({ username: c.username }) },
+  { method: 'GET', path: /^\/profile$/, auth: true, run: (c) => getProfile(c.username) },
+  { method: 'PUT', path: /^\/profile$/, auth: true, run: (c) => saveProfile(c.username, c.body) },
+  { method: 'POST', path: /^\/profile\/id-upload-url$/, auth: true, run: (c) => createIdUploadUrl(c.username, c.body) },
+  { method: 'POST', path: /^\/profile\/scan-id$/, auth: true, run: (c) => scanIdCard(c.username, c.body) },
   { method: 'POST', path: /^\/reports\/upload-url$/, auth: true, run: (c) => createUploadUrl(c.username, c.body) },
   { method: 'POST', path: /^\/reports\/analyze$/, auth: true, run: (c) => analyzeReport(c.username, c.body) },
   { method: 'GET', path: /^\/reports$/, auth: true, run: (c) => listReports(c.username) },

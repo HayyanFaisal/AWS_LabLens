@@ -36,6 +36,25 @@ export async function analyzeSync(bucket: string, key: string): Promise<Block[]>
 }
 
 /**
+ * Queries only (no tables): used for ID cards. One synchronous call that asks
+ * Textract questions like "What is the date of birth?" about an image.
+ */
+export async function analyzeQueries(
+  bucket: string,
+  key: string,
+  queries: readonly { alias: string; text: string }[],
+): Promise<Block[]> {
+  const res = await textract.send(
+    new AnalyzeDocumentCommand({
+      Document: { S3Object: { Bucket: bucket, Name: key } },
+      FeatureTypes: ['QUERIES'],
+      QueriesConfig: { Queries: queries.map((q) => ({ Text: q.text, Alias: q.alias })) },
+    }),
+  );
+  return res.Blocks ?? [];
+}
+
+/**
  * PDFs -> asynchronous job:
  * StartDocumentAnalysis returns a JobId, we poll GetDocumentAnalysis until
  * the job finishes, then page through all result blocks with NextToken.

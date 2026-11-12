@@ -10,7 +10,8 @@
     "sandbox": "ampx sandbox",
     "test:parser": "tsx amplify/functions/api/parser.test.ts",
     "test:api": "tsx amplify/functions/api/api.test.ts",
-    "test": "npm run test:parser --silent && npm run test:api --silent",
+    "test:profile": "tsx amplify/functions/api/profile.test.ts",
+    "test": "npm run test:parser --silent && npm run test:api --silent && npm run test:profile --silent",
     "typecheck": "tsc --noEmit -p amplify/tsconfig.json && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

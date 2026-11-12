@@ -12,7 +12,7 @@ import { api } from './functions/api/resource';
  *
  *   api      -> AWS Lambda function + public Function URL (our REST API)
  *   bucket   -> Amazon S3: private bucket for uploaded reports
- *   users    -> Amazon DynamoDB table: username -> salted password hash
+ *   users    -> Amazon DynamoDB table: username -> salted password hash + health profile
  *   reports  -> Amazon DynamoDB table: (username, reportId) -> extracted results
  */
 const backend = defineBackend({ api });
@@ -35,6 +35,9 @@ const bucket = new Bucket(dataStack, 'ReportsBucket', {
       maxAge: 3000,
     },
   ],
+  // Safety net: ID card photos are deleted right after Textract reads them;
+  // if that ever fails, S3 removes anything left under ids/ after one day.
+  lifecycleRules: [{ prefix: 'ids/', expiration: Duration.days(1) }],
   removalPolicy: RemovalPolicy.DESTROY, // demo project: cleanup deletes everything
   autoDeleteObjects: true,
 });
@@ -62,7 +65,7 @@ backend.api.addEnvironment('REPORTS_TABLE', reportsTable.tableName);
 bucket.grantRead(apiLambda); // presigned GET, HeadObject, Textract reading the file
 bucket.grantPut(apiLambda); // presigned PUT
 bucket.grantDelete(apiLambda); // delete report
-usersTable.grant(apiLambda, 'dynamodb:GetItem', 'dynamodb:PutItem');
+usersTable.grant(apiLambda, 'dynamodb:GetItem', 'dynamodb:PutItem', 'dynamodb:UpdateItem');
 reportsTable.grant(
   apiLambda,
   'dynamodb:GetItem',
@@ -89,7 +92,7 @@ const functionUrl = apiLambda.addFunctionUrl({
   cors: {
     // "*" is safe here: the token travels in a header, never in a cookie
     allowedOrigins: ['*'],
-    allowedMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.DELETE],
+    allowedMethods: [HttpMethod.GET, HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE],
     allowedHeaders: ['authorization', 'content-type'],
     maxAge: Duration.hours(1),
   },

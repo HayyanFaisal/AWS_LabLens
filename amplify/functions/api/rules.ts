@@ -42,12 +42,13 @@ export function safeFileName(fileName: string): string {
 }
 
 /**
- * Ownership check: a user may only analyze files under their own prefix.
+ * Ownership check: a user may only analyze files under their own prefix
+ * ("reports/<username>/" for lab reports, "ids/<username>/" for ID cards).
  * The trailing "/" matters: user "ali" must not reach "reports/ali_2/...".
  */
-export function isOwnedKey(fileKey: string, username: string): boolean {
+export function isOwnedKey(fileKey: string, username: string, folder: 'reports' | 'ids' = 'reports'): boolean {
   return (
-    fileKey.startsWith(`reports/${username}/`) &&
+    fileKey.startsWith(`${folder}/${username}/`) &&
     !fileKey.includes('..') &&
     !fileKey.includes('//') &&
     fileKey.length <= 300
