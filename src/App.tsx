@@ -20,6 +20,15 @@ export default function App() {
   const [session, setSession] = useState<Session | null>(loadSession);
   const [tab, setTab] = useState<Tab>('upload');
   const [openReportId, setOpenReportId] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  // The header turns solid once the page scrolls past the gradient band
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // Any 401 from the API (expired or invalid token) signs the user out
   useEffect(() => {
@@ -44,7 +53,8 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="topbar">
+      <div className="hero-bg" aria-hidden="true" />
+      <header className={scrolled ? 'topbar scrolled' : 'topbar'}>
         <div className="topbar-inner">
           <div className="brand">
             <Logo />

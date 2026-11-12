@@ -74,7 +74,8 @@ export default function UploadPanel({ onOpen }: { onOpen: (reportId: string) => 
     <div className="page">
       <header className="page-head">
         <div>
-          <h1>Upload a lab report</h1>
+          <div className="hero-eyebrow"><span className="dot-live" /> Amazon Textract · TABLES + QUERIES</div>
+          <h1>Read any lab report in seconds.</h1>
           <p className="muted">A photo (PNG/JPG) or a PDF. It goes into your private S3 folder, Textract reads it, and the results are saved to your history.</p>
         </div>
       </header>
@@ -148,8 +149,8 @@ function Result({ report, totalMs, onOpen }: { report: Report; totalMs?: number;
       <div className="stat-row">
         <div className="stat"><div className="stat-value"><CountUp value={report.testCount ?? 0} /></div><div className="stat-label">tests found</div></div>
         <div className={`stat ${abnormal ? 'bad' : 'good'}`}><div className="stat-value"><CountUp value={abnormal} /></div><div className="stat-label">out of range</div></div>
-        <div className="stat"><div className="stat-value"><CountUp value={report.pages ?? 1} /> / <CountUp value={report.tables ?? 0} /></div><div className="stat-label">pages / tables</div></div>
-        <div className="stat"><div className="stat-value"><CountUp value={(totalMs ?? 0) / 1000} decimals={1} />s</div><div className="stat-label">end to end</div></div>
+        <div className="stat indigo"><div className="stat-value"><CountUp value={report.pages ?? 1} /> / <CountUp value={report.tables ?? 0} /></div><div className="stat-label">pages / tables</div></div>
+        <div className="stat violet"><div className="stat-value"><CountUp value={(totalMs ?? 0) / 1000} decimals={1} />s</div><div className="stat-label">end to end</div></div>
       </div>
 
       {!!report.warnings?.length && (
@@ -184,8 +185,8 @@ function Rejected({ report }: { report: Report }) {
         <h2>{report.fileName}</h2>
         <p>{report.errorMessage}</p>
         <p className="muted small">
-          Textract found {report.tables ?? 0} table(s) in {report.blockCount ?? 0} blocks. The file is kept in
-          My reports as <strong>Failed</strong> so you can delete it.
+          {report.blockCount ? `Textract found ${report.tables ?? 0} table(s) in ${report.blockCount} blocks. ` : ''}
+          The file is kept in My reports as <strong>Failed</strong> so you can delete it.
         </p>
       </div>
     </section>

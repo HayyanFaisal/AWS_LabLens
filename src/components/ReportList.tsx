@@ -68,7 +68,7 @@ export default function ReportList({ onOpen }: { onOpen: (id: string) => void })
             return (
               <article
                 key={r.reportId}
-                className={`report-card ${failed ? 'failed' : ''}`}
+                className={`report-card ${failed ? 'failed' : abnormal ? 'flagged' : ''}`}
                 style={{ ['--i' as string]: i }}
                 onClick={() => !failed && onOpen(r.reportId)}
                 tabIndex={failed ? -1 : 0}

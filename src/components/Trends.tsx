@@ -97,7 +97,7 @@ export default function Trends() {
 
       <div className="stat-row">
         <div className="stat"><div className="stat-value num">{reportCount}</div><div className="stat-label">reports</div></div>
-        <div className="stat"><div className="stat-value num">{series.length}</div><div className="stat-label">tests tracked</div></div>
+        <div className="stat indigo"><div className="stat-value num">{series.length}</div><div className="stat-label">tests tracked</div></div>
         <div className={`stat ${latestAbnormal.length ? 'bad' : 'good'}`}><div className="stat-value num">{latestAbnormal.length}</div><div className="stat-label">out of range now</div></div>
         <div className="stat good"><div className="stat-value num">{improving.length}</div><div className="stat-label">back in range</div></div>
       </div>

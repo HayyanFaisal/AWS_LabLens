@@ -51,7 +51,7 @@ export default function ReportDetail({ reportId, onBack }: { reportId: string; o
         <div className="stat-row compact">
           <div className="stat"><div className="stat-value num">{tests.length}</div><div className="stat-label">tests</div></div>
           <div className={`stat ${abnormal ? 'bad' : 'good'}`}><div className="stat-value num">{abnormal}</div><div className="stat-label">out of range</div></div>
-          <div className={`stat ${lowConf ? 'warn' : ''}`}><div className="stat-value num">{lowConf}</div><div className="stat-label">low confidence</div></div>
+          <div className={`stat ${lowConf ? 'warn' : 'indigo'}`}><div className="stat-value num">{lowConf}</div><div className="stat-label">low confidence</div></div>
         </div>
       </header>
 
