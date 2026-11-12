@@ -252,7 +252,61 @@ def old_scan(img: Image.Image) -> Image.Image:
     return img.rotate(0.8, expand=True, fillcolor=200).convert("RGB")
 
 
+def id_card(path):
+    """
+    A FICTIONAL identity card for the sign-up "Scan your ID card" step.
+    It is clearly marked SPECIMEN and copies no real government design.
+    Ali Raza's details match the demo reports, so name matching works.
+    """
+    from PIL import ImageDraw, ImageFont
+
+    def font(size, bold=False):
+        for name in (("arialbd.ttf" if bold else "arial.ttf"), ("DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf")):
+            try:
+                return ImageFont.truetype(name, size)
+            except OSError:
+                continue
+        return ImageFont.load_default()
+
+    W, H = 1012, 638
+    card = Image.new("RGB", (W, H), "#f4f7f2")
+    d = ImageDraw.Draw(card)
+    d.rectangle([0, 0, W, 92], fill="#1f6f5c")
+    d.text((36, 22), "DEMOLAND IDENTITY CARD", font=font(38, True), fill="white")
+    d.text((W - 300, 34), "SPECIMEN · NOT A REAL ID", font=font(20, True), fill="#d9f2e8")
+    # photo placeholder
+    d.rounded_rectangle([40, 130, 290, 440], radius=12, fill="#dfe6df", outline="#9fb3a8", width=2)
+    d.ellipse([115, 170, 215, 270], fill="#a9bab0")
+    d.rounded_rectangle([85, 285, 245, 420], radius=60, fill="#a9bab0")
+    fields = [
+        ("Name", "ALI RAZA"),
+        ("Father Name", "RAZA AHMED"),
+        ("Gender", "M"),
+        ("Country of Stay", "DEMOLAND"),
+        ("Identity Number", "00000-1234567-1"),
+        ("Date of Birth", "20.05.1990"),
+        ("Date of Expiry", "01.01.2032"),
+    ]
+    x, y = 330, 122
+    for i, (label, value) in enumerate(fields):
+        col = x if i < 4 else x + 330
+        row = y + (i if i < 4 else i - 4) * 98
+        d.text((col, row), label, font=font(21), fill="#3f6b5c")
+        d.text((col, row + 28), value, font=font(32, True), fill="#111111")
+    d.text((40, H - 70), "Fictional card generated for LabLens software testing", font=font(20), fill="#6b7f75")
+    d.rectangle([0, H - 14, W, H], fill="#1f6f5c")
+    # photographed on a desk, slightly tilted
+    photo = card.rotate(-2.2, expand=True, fillcolor=(196, 190, 178))
+    photo = ImageOps.expand(photo, border=50, fill=(186, 180, 168))
+    photo.save(path, quality=88)
+
+
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "id":
+        path = os.path.join(OUT, "id-card-ali-raza-specimen.jpg")
+        id_card(path)
+        print(f"  {os.path.basename(path):36s} {os.path.getsize(path) // 1024:5d} KB")
+        return
     jobs = [
         ("report-1-mar-2026.png", lambda: ali_story(0, "14/03/2026", "13/03/2026", "DL-26-03114"), "png"),
         ("report-2-jun-2026.jpg", lambda: ali_story(1, "16/06/2026", "15/06/2026", "DL-26-06277"), "photo"),

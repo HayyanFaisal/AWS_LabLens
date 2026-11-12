@@ -54,3 +54,13 @@ differences on the noisy scan are normal and are exactly what the confidence war
 - **Upload live**: #3 (2-page PDF, shows the async job) and #4 (different layout), then #8 to show a rejection.
 - **Trends** then shows HbA1c 7.6 → 7.1 → 6.4 → 5.8 → 5.6 across five reports.
 - Use #7 on Ali's account to show that each user only sees their own reports.
+
+## ID card for the sign-up "Scan your ID card" step
+
+| File | What it is | Expected result |
+|---|---|---|
+| `id-card-ali-raza-specimen.jpg` | Fictional "Demoland" identity card, marked SPECIMEN, photographed slightly tilted | Textract QUERIES fill **Name: Ali Raza**, **Date of birth: 20 May 1990**, **Sex: Male**, ID number shown only as **•••• 5671** |
+
+Regenerate it with `python samples/generate_samples.py id`. The name matches the demo
+reports, so after sign-up every Ali Raza report shows "matches profile", while the
+Sara Khan report (#7) is marked "different person".
