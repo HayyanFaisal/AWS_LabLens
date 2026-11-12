@@ -12,7 +12,7 @@ import {
 import { formatDate, formatShortDate, isAbnormal } from '../lib/format';
 import { direction, latest, outOfRangeNow, rangeLabel, useHealthData, type Point, type Series } from '../lib/health';
 import { PANELS, testInfo } from '../lib/testLibrary';
-import { Empty, FlagBadge, Icon, PageHeader, Sparkline, Spinner } from './ui';
+import { Empty, FlagBadge, Icon, OrganIcon, PageHeader, Sparkline, Spinner } from './ui';
 
 const BLUE = '#0077b6';
 const RED = '#dc2626';
@@ -57,7 +57,7 @@ export default function Trends({ initialKey }: { initialKey?: string | null }) {
           </label>
           {groups.map(({ p, list }) => (
             <div key={p.id} className="tl-group">
-              <div className="tl-group-name"><span className="group-dot" style={{ background: p.color }} /> {p.name}</div>
+              <div className="tl-group-name"><span style={{ color: p.color }}><OrganIcon src={p.icon} size={16} /></span> {p.name}</div>
               {list.map((s) => {
                 const last = latest(s);
                 return (
@@ -78,7 +78,7 @@ export default function Trends({ initialKey }: { initialKey?: string | null }) {
         <section className="card chart-card">
           <div className="chart-head">
             <div>
-              <div className="eyebrow" style={{ color: current.panel.color }}>{current.panel.name}</div>
+              <div className="eyebrow" style={{ color: current.panel.color }}><OrganIcon src={current.panel.icon} size={16} /> {current.panel.name}</div>
               <h2>{current.name}</h2>
               <div className="muted small">Reference range: {rangeLabel(current.low, current.high, current.unit)}</div>
             </div>

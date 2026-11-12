@@ -4,6 +4,17 @@
  * advice and does not diagnose anything. Unknown tests fall into "Other".
  */
 import { testKey } from './format';
+// Organ and lab icons: Healthicons (healthicons.org), public domain (CC0)
+import iconBloodCells from '../assets/healthicons/blood-cells.svg';
+import iconBloodDrop from '../assets/healthicons/blood-drop.svg';
+import iconBloodVessel from '../assets/healthicons/blood-vessel.svg';
+import iconBone from '../assets/healthicons/bone.svg';
+import iconHeart from '../assets/healthicons/heart-organ.svg';
+import iconKidneys from '../assets/healthicons/kidneys.svg';
+import iconLabSearch from '../assets/healthicons/lab-search.svg';
+import iconLiver from '../assets/healthicons/liver.svg';
+import iconPancreas from '../assets/healthicons/pancreas.svg';
+import iconThyroid from '../assets/healthicons/thyroid.svg';
 
 export type PanelId = 'cbc' | 'diabetes' | 'kidney' | 'liver' | 'lipids' | 'thyroid' | 'iron' | 'vitamins' | 'electrolytes' | 'other';
 
@@ -12,19 +23,22 @@ export interface Panel {
   name: string;
   short: string;
   color: string; // accent used for the panel chip
+  icon: string; // Healthicons organ icon (URL)
+  organ: string; // what the body map labels it
+  spot: [x: number, y: number]; // position on the body map, % of its width/height
 }
 
 export const PANELS: Panel[] = [
-  { id: 'cbc', name: 'Blood count', short: 'CBC', color: '#e11d48' },
-  { id: 'diabetes', name: 'Blood sugar', short: 'Sugar', color: '#d97706' },
-  { id: 'lipids', name: 'Cholesterol & lipids', short: 'Lipids', color: '#ca8a04' },
-  { id: 'kidney', name: 'Kidney function', short: 'Kidney', color: '#0891b2' },
-  { id: 'liver', name: 'Liver function', short: 'Liver', color: '#16a34a' },
-  { id: 'thyroid', name: 'Thyroid', short: 'Thyroid', color: '#0077b6' },
-  { id: 'iron', name: 'Iron studies', short: 'Iron', color: '#9f1239' },
-  { id: 'vitamins', name: 'Vitamins', short: 'Vitamins', color: '#ea580c' },
-  { id: 'electrolytes', name: 'Electrolytes', short: 'Salts', color: '#0284c7' },
-  { id: 'other', name: 'Other tests', short: 'Other', color: '#64748b' },
+  { id: 'thyroid', name: 'Thyroid', short: 'Thyroid', color: '#0077b6', icon: iconThyroid, organ: 'Thyroid', spot: [50, 17] },
+  { id: 'lipids', name: 'Cholesterol & lipids', short: 'Lipids', color: '#ca8a04', icon: iconHeart, organ: 'Heart & vessels', spot: [57, 29] },
+  { id: 'liver', name: 'Liver function', short: 'Liver', color: '#16a34a', icon: iconLiver, organ: 'Liver', spot: [41, 38] },
+  { id: 'diabetes', name: 'Blood sugar', short: 'Sugar', color: '#d97706', icon: iconPancreas, organ: 'Pancreas', spot: [58, 41] },
+  { id: 'kidney', name: 'Kidney function', short: 'Kidney', color: '#0891b2', icon: iconKidneys, organ: 'Kidneys', spot: [50, 48] },
+  { id: 'cbc', name: 'Blood count', short: 'CBC', color: '#e11d48', icon: iconBloodCells, organ: 'Blood', spot: [17, 47] },
+  { id: 'iron', name: 'Iron studies', short: 'Iron', color: '#9f1239', icon: iconBloodDrop, organ: 'Iron stores', spot: [83, 47] },
+  { id: 'electrolytes', name: 'Electrolytes', short: 'Salts', color: '#0284c7', icon: iconBloodVessel, organ: 'Body salts', spot: [80, 33] },
+  { id: 'vitamins', name: 'Vitamins & minerals', short: 'Vitamins', color: '#ea580c', icon: iconBone, organ: 'Bones', spot: [42, 78] },
+  { id: 'other', name: 'Other tests', short: 'Other', color: '#64748b', icon: iconLabSearch, organ: 'Other', spot: [60, 78] },
 ];
 export const panelById = Object.fromEntries(PANELS.map((p) => [p.id, p])) as Record<PanelId, Panel>;
 
@@ -75,6 +89,9 @@ const LIB: Record<string, TestInfo> = {
   serumiron: { panel: 'iron', about: 'Iron currently circulating in the blood.', low: 'Often low with iron deficiency.' },
 
   vitamind25oh: { panel: 'vitamins', about: 'Vitamin D, important for bones, muscles and immunity.', low: 'Very common; linked with low sun exposure.' },
+  serumcalcium: { panel: 'vitamins', about: 'Calcium in the blood, needed for bones, nerves and muscles.', low: 'Often goes with low vitamin D.', high: 'Can occur with some hormone or bone conditions.' },
+  phosphorus: { panel: 'vitamins', about: 'A mineral that works with calcium to build bones.', low: 'Can occur with poor nutrition or vitamin D deficiency.', high: 'Can occur with reduced kidney function.' },
+  haematocrit: { panel: 'cbc', about: 'Share of blood volume made of red cells.', low: 'Usually goes with anaemia.', high: 'Can occur with dehydration.' },
   vitaminb12: { panel: 'vitamins', about: 'Vitamin B12, needed for nerves and red blood cells.', low: 'Can cause anaemia, tiredness and tingling.' },
 
   sodium: { panel: 'electrolytes', about: 'A salt that controls fluid balance.', low: 'Can cause confusion or tiredness.', high: 'Usually linked with dehydration.' },

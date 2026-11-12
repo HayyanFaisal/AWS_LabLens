@@ -1,15 +1,18 @@
 import { useState, type FormEvent } from 'react';
 import { demoLogin, login, register, type Session } from '../api';
-import { Icon, Logo, Spinner } from './ui';
+import { Ecg, Icon, Logo, Spinner } from './ui';
 
 type Mode = 'login' | 'register';
 
 export const SIGNUP_STEPS = ['Account', 'Identity', 'Health profile', 'Review'];
 
 /** Pre-filled demo accounts (created by POST /auth/demo, reset on every demo sign-in). */
-const DEMOS = [
-  { key: 'ali' as const, initials: 'AR', name: 'Ali Raza', meta: '36 · Male · Type 2 diabetes', detail: '7 reports · Dec 2025 – Nov 2026 · ID scanned', color: '#0077b6' },
-  { key: 'sara' as const, initials: 'SK', name: 'Sara Khan', meta: '27 · Female · Anaemia', detail: '3 reports · Mar – Sep 2026 · ID scanned', color: '#b45309' },
+type DemoKey = 'rana' | 'ali' | 'hayyan' | 'ammar';
+const DEMOS: { key: DemoKey; initials: string; name: string; meta: string; detail: string; color: string }[] = [
+  { key: 'rana', initials: 'RA', name: 'Rana Ahmad Hassan', meta: 'Prediabetes, improving', detail: '3 reports · Feb – Sep 2026', color: '#d97706' },
+  { key: 'ali', initials: 'AS', name: 'Ali Sajjad', meta: 'Vitamin D deficiency', detail: '4 uploads · 1 rejected', color: '#ea580c' },
+  { key: 'hayyan', initials: 'HF', name: 'Hayyan Faisal', meta: 'Healthy · all in range', detail: '2 reports · Mar – Sep 2026', color: '#059669' },
+  { key: 'ammar', initials: 'MA', name: 'Muhammad Ammar', meta: 'Hypothyroidism, controlled', detail: "3 reports · 5'7\" · 170 cm", color: '#0077b6' },
 ];
 
 export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) => void }) {
@@ -21,7 +24,7 @@ export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) =>
   const [busy, setBusy] = useState(false);
   const [demoBusy, setDemoBusy] = useState<string | null>(null);
 
-  async function openDemo(key: 'ali' | 'sara') {
+  async function openDemo(key: DemoKey) {
     setError(null);
     setDemoBusy(key);
     try {
@@ -137,6 +140,7 @@ export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) =>
       <section className="auth-side" aria-hidden="true">
         <div className="auth-side-inner">
           <div className="side-kicker"><span className="dot-live" /> Powered by Amazon Textract</div>
+          <Ecg className="side-ecg" />
           <h2>Paper lab reports in.<br />Clear health data out.</h2>
           <ScanVisual />
           <ul className="side-points">

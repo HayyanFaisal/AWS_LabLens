@@ -170,7 +170,7 @@ input, select { font: inherit; color: inherit; }
 .auth-main { display: flex; flex-direction: column; padding: 2rem clamp(1.25rem, 5vw, 4.5rem); }
 .auth-brand, .brand { display: flex; align-items: center; gap: 0.6rem; }
 .auth-brand span, .brand-name { font-weight: 750; font-size: 1.25rem; letter-spacing: -0.03em; color: var(--ink); }
-.auth-form-wrap { width: 100%; max-width: 440px; margin: auto 0; padding: 2.5rem 0; display: grid; gap: 0.6rem; animation: fade-up 360ms var(--ease-out); }
+.auth-form-wrap { width: 100%; max-width: 480px; margin: auto 0; padding: 2.5rem 0; display: grid; gap: 0.6rem; animation: fade-up 360ms var(--ease-out); }
 .auth-form-wrap h1 { font-size: 2.1rem; }
 .page-sub { color: var(--muted); font-size: 1rem; max-width: 62ch; }
 .auth-form { display: grid; gap: 1rem; margin-top: 1.2rem; }
@@ -774,3 +774,85 @@ input, select { font: inherit; color: inherit; }
 .demo-banner { display: flex; align-items: center; gap: 0.55rem; padding: 0.65rem 0.95rem; border-radius: var(--r); background: #fff7e6; color: #92400e; border: 1px solid rgba(146, 64, 14, 0.2); font-size: 0.88rem; font-weight: 500; }
 .id-thumb { display: block; margin-top: 0.8rem; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); max-width: 260px; }
 .id-thumb img { display: block; width: 100%; height: auto; }
+
+/* =========================================================================
+   MEDICAL VISUALS: organ icons (Healthicons, CC0), body map, ECG line
+   ========================================================================= */
+.organ-icon {
+  display: inline-block; flex-shrink: 0; background: currentColor; vertical-align: -4px;
+  -webkit-mask: var(--icon) center / contain no-repeat; mask: var(--icon) center / contain no-repeat;
+}
+
+/* ECG heartbeat: the line draws itself left to right, on a loop */
+.ecg { display: block; width: 100%; height: 60px; overflow: visible; }
+.ecg path { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; stroke-dasharray: 520; stroke-dashoffset: 520; animation: ecg-draw 3.2s linear infinite; }
+@keyframes ecg-draw { 0% { stroke-dashoffset: 520; opacity: 1; } 70% { stroke-dashoffset: 0; opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 0; } }
+.overview { position: relative; overflow: hidden; }
+.overview > * { position: relative; }
+.overview > .overview-ecg { position: absolute; right: -10px; bottom: 6px; width: 46%; height: 70px; color: rgba(0, 119, 182, 0.22); }
+.side-ecg { color: var(--primary); height: 48px; margin: -0.4rem 0 -0.6rem; }
+
+/* demo profiles: 2 x 2 */
+.demo-list { grid-template-columns: 1fr 1fr; }
+.demo-card { grid-template-columns: auto 1fr; padding: 0.7rem 0.75rem; }
+.demo-card > .icon, .demo-card > .spinner { display: none; }
+.demo-avatar { width: 40px; height: 40px; font-size: 0.88rem; }
+.demo-text strong { font-size: 0.9rem; }
+.demo-text small { font-size: 0.76rem; }
+
+/* body systems: map + tiles */
+.systems-layout { display: grid; grid-template-columns: minmax(230px, 270px) minmax(0, 1fr); gap: 1rem; align-items: stretch; }
+.systems-layout .systems { align-content: start; }
+.body-card { padding: 1rem 1rem 0.8rem; background: radial-gradient(260px 200px at 50% 35%, #f2f8fd, #fff 75%); }
+.body-map { position: relative; width: 100%; max-width: 200px; margin: 0 auto; aspect-ratio: 240 / 500; }
+.body-figure { position: absolute; inset: 0 0 auto 0; width: 100%; height: auto; }
+.body-scan {
+  position: absolute; left: 6%; right: 6%; top: 0; height: 18%; pointer-events: none; border-radius: 40%;
+  background: linear-gradient(180deg, transparent, rgba(0, 119, 182, 0.12) 70%, rgba(0, 119, 182, 0.35) 98%, transparent);
+  animation: body-scan 5s ease-in-out infinite;
+}
+@keyframes body-scan { 0% { transform: translateY(-10%); opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(470%); opacity: 0; } }
+.organ-pin {
+  position: absolute; translate: -50% -50%; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  background: #fff; border: 2px solid var(--green-500); color: var(--green); box-shadow: 0 4px 12px -4px rgba(13, 37, 61, 0.35);
+  padding: 0; animation: pin-in 420ms var(--ease-out) both; transition: transform 160ms var(--ease-out);
+}
+.organ-pin:nth-of-type(2) { animation-delay: 60ms; } .organ-pin:nth-of-type(3) { animation-delay: 120ms; }
+.organ-pin:nth-of-type(4) { animation-delay: 180ms; } .organ-pin:nth-of-type(5) { animation-delay: 240ms; }
+.organ-pin:nth-of-type(6) { animation-delay: 300ms; } .organ-pin:nth-of-type(7) { animation-delay: 360ms; }
+.organ-pin:nth-of-type(8) { animation-delay: 420ms; } .organ-pin:nth-of-type(9) { animation-delay: 480ms; }
+@keyframes pin-in { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
+.organ-pin.bad { border-color: var(--red-500); color: var(--red); }
+.organ-pin.bad::after { content: ''; position: absolute; inset: -2px; border-radius: 50%; border: 2px solid var(--red-500); animation: ring-out 1.6s var(--ease-out) infinite; }
+.organ-pin.none { border: 2px dashed var(--line-2); color: var(--faint); box-shadow: none; opacity: 0.75; }
+@media (hover: hover) and (pointer: fine) { .organ-pin:not(:disabled):hover { transform: scale(1.12); z-index: 3; } }
+.pin-tip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; translate: -50% 0; white-space: nowrap; z-index: 4;
+  display: grid; gap: 0.05rem; text-align: left; font-size: 0.74rem; color: var(--muted); font-weight: 500;
+  background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 0.35rem 0.55rem; box-shadow: var(--shadow);
+  opacity: 0; transform: translateY(4px); pointer-events: none; transition: opacity 150ms ease, transform 150ms var(--ease-out);
+}
+.pin-tip strong { color: var(--ink); font-size: 0.8rem; }
+.organ-pin:hover .pin-tip, .organ-pin:focus-visible .pin-tip { opacity: 1; transform: none; }
+.body-legend { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; gap: 0.8rem; font-size: 0.72rem; color: var(--muted); font-weight: 550; }
+.body-legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+.body-legend i { width: 9px; height: 9px; border-radius: 50%; background: var(--green-500); }
+.body-legend i.bad { background: var(--red-500); }
+.body-legend i.none { background: transparent; border: 1.5px dashed var(--faint); }
+
+.sys-head { display: flex; align-items: center; gap: 0.55rem; }
+.sys-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; color: var(--c); background: color-mix(in srgb, var(--c) 12%, white); flex-shrink: 0; }
+.group-icon { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: #fff; border: 1px solid var(--line); margin-right: 0.35rem; vertical-align: middle; }
+.tl-group-name { display: flex; align-items: center; gap: 0.4rem; }
+.chart-head .eyebrow { gap: 0.35rem; }
+
+@media (max-width: 1100px) {
+  .systems-layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .demo-list { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ecg path { stroke-dashoffset: 0; opacity: 1 !important; }
+  .body-scan { display: none; }
+}

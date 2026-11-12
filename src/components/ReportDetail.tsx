@@ -4,7 +4,7 @@ import { formatDate, isAbnormal } from '../lib/format';
 import { ageFrom, nameMatch } from '../lib/health';
 import { PANELS, testInfo, type PanelId } from '../lib/testLibrary';
 import type { Profile, Report, TestResult } from '../types';
-import { FlagBadge, Icon, RangeBar, Spinner } from './ui';
+import { FlagBadge, Icon, OrganIcon, RangeBar, Spinner } from './ui';
 
 const LOW_CONFIDENCE = 90;
 type Row = TestResult & { index: number; panel: PanelId };
@@ -123,7 +123,7 @@ export default function ReportDetail({ reportId, onBack, profile }: { reportId: 
                     {g.panel && (
                       <tr className="group-row">
                         <td colSpan={6}>
-                          <span className="group-dot" style={{ background: g.panel.color }} /> {g.panel.name}
+                          <span className="group-icon" style={{ color: g.panel.color }}><OrganIcon src={g.panel.icon} size={18} /></span> {g.panel.name}
                           <span className="muted small"> · {g.rows.length} test{g.rows.length > 1 ? 's' : ''}{g.rows.some((r) => isAbnormal(r.flag)) ? ` · ${g.rows.filter((r) => isAbnormal(r.flag)).length} flagged` : ''}</span>
                         </td>
                       </tr>

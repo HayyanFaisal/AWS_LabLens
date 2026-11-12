@@ -9,7 +9,8 @@ import {
 } from '../lib/health';
 import { PANELS } from '../lib/testLibrary';
 import type { Profile } from '../types';
-import { FlagBadge, Icon, PageHeader, ScoreRing, Sparkline, Spinner } from './ui';
+import BodyMap from './BodyMap';
+import { Ecg, FlagBadge, Icon, OrganIcon, PageHeader, ScoreRing, Sparkline, Spinner } from './ui';
 
 export type Page = 'dashboard' | 'scan' | 'reports' | 'trends' | 'profile';
 
@@ -77,6 +78,7 @@ export default function Dashboard({
 
       <div className="dash-grid">
         <section className="card overview">
+          <Ecg className="overview-ecg" />
           <ScoreRing value={score} label="in range" />
           <div className="overview-text">
             <h2>Health overview</h2>
@@ -181,12 +183,14 @@ function SystemsGrid({ series, onOpenTest }: { series: Series[]; onOpenTest: (ke
   }).filter((x) => x.tests.length);
   return (
     <section>
-      <h2 className="section-title">Body systems <span className="muted small">grouped from your test results</span></h2>
+      <h2 className="section-title">Body systems <span className="muted small">every result is grouped by the organ or system it checks</span></h2>
+      <div className="systems-layout">
+      <div className="card body-card"><BodyMap series={series} onOpenTest={onOpenTest} /></div>
       <div className="systems">
         {panels.map(({ p, tests, flagged }, i) => (
           <button key={p.id} className={`system ${flagged.length ? 'flagged' : 'ok'}`} style={{ ['--c' as string]: p.color, ['--i' as string]: i }}
             onClick={() => onOpenTest((flagged[0] ?? tests[0]).key)}>
-            <span className="sys-name">{p.name}</span>
+            <span className="sys-head"><span className="sys-icon"><OrganIcon src={p.icon} size={22} /></span><span className="sys-name">{p.name}</span></span>
             <span className="sys-count">{tests.length} test{tests.length > 1 ? 's' : ''}</span>
             <span className="sys-status">
               {flagged.length ? <><Icon name="alert" size={14} /> {flagged.length} flagged</> : <><Icon name="check" size={14} /> All in range</>}
@@ -194,6 +198,7 @@ function SystemsGrid({ series, onOpenTest }: { series: Series[]; onOpenTest: (ke
             <span className="sys-bar">{tests.map((s) => <i key={s.key} className={latest(s).flag.toLowerCase()} />)}</span>
           </button>
         ))}
+      </div>
       </div>
     </section>
   );

@@ -194,3 +194,24 @@ export function Sparkline({
     </svg>
   );
 }
+
+/** A Healthicons SVG drawn as a mask, so it takes any colour (currentColor or `color`). */
+export function OrganIcon({ src, size = 22, color }: { src: string; size?: number; color?: string }) {
+  return (
+    <span
+      className="organ-icon"
+      aria-hidden="true"
+      style={{ width: size, height: size, ['--icon' as string]: `url("${src}")`, color }}
+    />
+  );
+}
+
+/** Animated heartbeat line (draws itself on a loop; static for reduced motion). */
+export function Ecg({ className = '' }: { className?: string }) {
+  const beat = 'l10 0 l6 -4 l6 4 l8 0 l5 6 l7 -34 l7 44 l6 -16 l12 0 l7 -6 l8 6';
+  return (
+    <svg className={`ecg ${className}`} viewBox="0 0 320 60" preserveAspectRatio="none" aria-hidden="true">
+      <path d={`M0 34 l22 0 ${beat} l32 0 ${beat} l32 0 ${beat} l22 0`} />
+    </svg>
+  );
+}

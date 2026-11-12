@@ -95,8 +95,8 @@ export default function ProfilePage({ username, createdAt, profile, onSaved, dem
               <dt>Member since</dt><dd>{createdAt ? formatDate(createdAt) : '—'}</dd>
             </dl>
             {demo && (
-              <a className="id-thumb" href={`/demo/id-card-${profile.fullName.toLowerCase().replace(/\s+/g, '-')}-specimen.jpg`} target="_blank" rel="noreferrer" title="Fictional specimen ID card used for this demo profile">
-                <img src={`/demo/id-card-${profile.fullName.toLowerCase().replace(/\s+/g, '-')}-specimen.jpg`} alt="Fictional specimen ID card" />
+              <a className="id-thumb" href={`/demo/cnic-${username.replace(/^demo_/, '')}-specimen.jpg`} target="_blank" rel="noreferrer" title="CNIC-style specimen card (dummy number) used for this demo profile">
+                <img src={`/demo/cnic-${username.replace(/^demo_/, '')}-specimen.jpg`} alt="CNIC-style specimen card" />
               </a>
             )}
           </section>
