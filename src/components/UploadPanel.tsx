@@ -1,251 +1,193 @@
 import { useRef, useState } from 'react';
-import { uploadData } from 'aws-amplify/storage';
-import { client, type Flag } from '../client';
+import { analyze, getUploadUrl, uploadToS3 } from '../api';
+import { formatMs } from '../lib/format';
+import type { Report } from '../types';
+import Pipeline, { type Stage, type StepInfo } from './Pipeline';
+import { CountUp, Icon } from './ui';
 
-type Step = 'idle' | 'uploading' | 'analyzing' | 'saving' | 'done' | 'error';
+const ACCEPT = /\.(png|jpe?g|pdf|tiff?)$/i;
+const MAX_BYTES = 10 * 1024 * 1024;
 
-interface Summary {
-  reportId: string;
-  mode: string;
-  pages: number;
-  tables: number;
-  tests: number;
-  abnormal: number;
-  seconds: number;
-  queryAnswers: { question?: string | null; answer?: string | null; confidence?: number | null }[];
+interface Timings {
+  upload?: number;
+  analyze?: number;
+  save?: number;
+  total?: number;
 }
 
-const STEPS: { key: Step; label: string; detail: string }[] = [
-  { key: 'uploading', label: 'Upload', detail: 'Amplify Storage → Amazon S3 (private folder)' },
-  { key: 'analyzing', label: 'Analyze', detail: 'Amazon Textract → Tables + Queries' },
-  { key: 'saving', label: 'Save', detail: 'Amplify Data → AppSync + DynamoDB' },
-];
-
-export default function UploadPanel({ onDone }: { onDone: (reportId: string) => void }) {
-  const [step, setStep] = useState<Step>('idle');
+export default function UploadPanel({ onOpen }: { onOpen: (reportId: string) => void }) {
+  const [stage, setStage] = useState<Stage>('idle');
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [summary, setSummary] = useState<Summary | null>(null);
+  const [report, setReport] = useState<Report | null>(null);
+  const [timings, setTimings] = useState<Timings>({});
+  const [fileName, setFileName] = useState('');
   const [dragOver, setDragOver] = useState(false);
+  const [failedStep, setFailedStep] = useState<number | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
+  const busy = stage === 'upload' || stage === 'analyze' || stage === 'save';
 
   async function handleFile(file: File) {
-    if (!/\.(png|jpe?g|pdf|tiff?)$/i.test(file.name)) {
-      setError('Please choose a PNG, JPG, PDF or TIFF file.');
-      return;
-    }
+    if (!ACCEPT.test(file.name)) return setError('Please choose a PNG, JPG, PDF or TIFF file.');
+    if (file.size > MAX_BYTES) return setError('That file is larger than 10 MB.');
     setError(null);
-    setSummary(null);
+    setReport(null);
+    setTimings({});
     setProgress(0);
-    const started = Date.now();
-    let reportId: string | null = null;
+    setFileName(file.name);
+    setFailedStep(undefined);
+    const t0 = performance.now();
+    let step = 0; // which step we are in, so an error can be shown on the right one
 
     try {
-      // 1) Upload the file to the user's private S3 folder
-      setStep('uploading');
-      const safeName = file.name.replace(/[^\w.-]+/g, '_');
-      const { path: fileKey } = await uploadData({
-        path: ({ identityId }) => `reports/${identityId}/${Date.now()}-${safeName}`,
-        data: file,
-        options: {
-          contentType: file.type || undefined,
-          onProgress: ({ transferredBytes, totalBytes }) =>
-            totalBytes && setProgress(Math.round((transferredBytes / totalBytes) * 100)),
-        },
-      }).result;
+      // 1) Upload: ask the API for a presigned URL, then PUT the file straight into S3
+      setStage('upload');
+      const { uploadUrl, fileKey, contentType } = await getUploadUrl(file.name, file.size);
+      await uploadToS3(uploadUrl, file, contentType, setProgress);
+      const t1 = performance.now();
+      setTimings({ upload: t1 - t0 });
 
-      // Create the report record straight away (shows as "Processing" in the list)
-      const created = await client.models.Report.create({
-        fileKey,
-        fileName: file.name,
-        status: 'PROCESSING',
-      });
-      const newId = created.data?.id;
-      if (!newId) throw new Error('Could not create report record');
-      reportId = newId;
-
-      // 2) Ask the Lambda to run Textract on it
-      setStep('analyzing');
-      const { data: result, errors } = await client.mutations.processReport({ fileKey });
-      if (errors?.length || !result) {
-        throw new Error(errors?.[0]?.message ?? 'Textract processing failed');
-      }
-
-      // 3) Save every extracted test as its own row
-      setStep('saving');
-      const tests = (result.tests ?? []).filter((t): t is NonNullable<typeof t> => !!t);
-      const reportDate = result.reportDate ?? new Date().toISOString().slice(0, 10);
-      await Promise.all(
-        tests.map((t) =>
-          client.models.TestResult.create({
-            reportId: newId,
-            reportDate,
-            testName: t.testName,
-            value: t.value,
-            rawValue: t.rawValue,
-            unit: t.unit,
-            rangeText: t.rangeText,
-            rangeLow: t.rangeLow,
-            rangeHigh: t.rangeHigh,
-            flag: (t.flag ?? 'UNKNOWN') as Flag,
-            confidence: t.confidence,
-            page: t.page,
-          }),
-        ),
-      );
-      const abnormal = tests.filter((t) => t.flag === 'LOW' || t.flag === 'HIGH').length;
-      await client.models.Report.update({
-        id: newId,
-        status: 'DONE',
-        patientName: result.patientName,
-        labName: result.labName,
-        reportDate,
-        pages: result.pages,
-        mode: result.mode,
-        testCount: tests.length,
-        abnormalCount: abnormal,
-      });
-
-      setSummary({
-        reportId: newId,
-        mode: result.mode ?? '',
-        pages: result.pages ?? 1,
-        tables: result.tables ?? 0,
-        tests: tests.length,
-        abnormal,
-        seconds: Math.round((Date.now() - started) / 100) / 10,
-        queryAnswers: (result.queryAnswers ?? []).filter((q): q is NonNullable<typeof q> => !!q),
-      });
-      setStep('done');
+      // 2) Analyze: the Lambda runs Textract + our parser, 3) and saves to DynamoDB
+      step = 1;
+      setStage('analyze');
+      const result = await analyze(fileKey, file.name);
+      const t2 = performance.now();
+      setStage('save');
+      await new Promise((r) => setTimeout(r, 450)); // let the "Save" step be visible
+      setTimings({ upload: t1 - t0, analyze: result.textractMs, save: result.saveMs, total: t2 - t0 });
+      setReport(result); // a rejected report is still uploaded, analyzed and saved (as FAILED)
+      setStage('done');
     } catch (e) {
-      const message = e instanceof Error ? e.message : String(e);
-      setError(message);
-      setStep('error');
-      if (reportId) {
-        await client.models.Report.update({ id: reportId, status: 'FAILED', errorMessage: message });
-      }
+      setError(e instanceof Error ? e.message : String(e));
+      setFailedStep(step);
+      setStage('error');
     }
   }
 
-  const busy = step === 'uploading' || step === 'analyzing' || step === 'saving';
-  const stepIndex = STEPS.findIndex((s) => s.key === step);
+  const steps: StepInfo[] = [
+    { key: 'upload', label: 'Upload', detail: 'Presigned URL → Amazon S3', time: timings.upload ? formatMs(timings.upload) : undefined },
+    { key: 'analyze', label: 'Analyze', detail: 'Lambda → Amazon Textract', time: timings.analyze ? formatMs(timings.analyze) : undefined },
+    { key: 'save', label: 'Save', detail: 'Lambda → DynamoDB', time: timings.save != null ? formatMs(timings.save) : undefined },
+  ];
 
   return (
-    <section className="panel">
-      <h1>Upload a lab report</h1>
-      <p className="muted">
-        Photo (PNG/JPG) or PDF. Textract reads the results table and answers questions about the
-        report, then everything is saved to your private history.
-      </p>
-
-      <div
-        className={`dropzone ${dragOver ? 'over' : ''} ${busy ? 'disabled' : ''}`}
-        onClick={() => !busy && inputRef.current?.click()}
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragOver(true);
-        }}
-        onDragLeave={() => setDragOver(false)}
-        onDrop={(e) => {
-          e.preventDefault();
-          setDragOver(false);
-          const f = e.dataTransfer.files?.[0];
-          if (f && !busy) handleFile(f);
-        }}
-      >
-        <div className="drop-icon">⬆</div>
+    <div className="page">
+      <header className="page-head">
         <div>
-          <strong>Drop a report here</strong> or click to choose a file
+          <h1>Upload a lab report</h1>
+          <p className="muted">A photo (PNG/JPG) or a PDF. It goes into your private S3 folder, Textract reads it, and the results are saved to your history.</p>
         </div>
-        <div className="muted small">PNG · JPG · PDF (multi-page OK) · TIFF</div>
-        <input
-          ref={inputRef}
-          type="file"
-          accept=".png,.jpg,.jpeg,.pdf,.tif,.tiff"
-          hidden
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) handleFile(f);
-            e.target.value = '';
-          }}
-        />
+      </header>
+
+      <div className="upload-grid">
+        <div className="card">
+          <div
+            className={`dropzone ${dragOver ? 'over' : ''} ${busy ? 'disabled' : ''}`}
+            onClick={() => !busy && inputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDragOver(false);
+              const f = e.dataTransfer.files?.[0];
+              if (f && !busy) handleFile(f);
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && !busy && inputRef.current?.click()}
+          >
+            <div className="drop-icon"><Icon name="upload" size={26} /></div>
+            <div className="drop-title">{busy ? `Processing ${fileName}…` : <>Drop a report here or <u>browse</u></>}</div>
+            <div className="muted small">PNG · JPG · PDF (multi-page) · TIFF · up to 10 MB</div>
+            <input ref={inputRef} type="file" accept=".png,.jpg,.jpeg,.pdf,.tif,.tiff" hidden
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }} />
+          </div>
+
+          <details className="rules">
+            <summary><Icon name="info" size={16} /> What counts as a lab report?</summary>
+            <ul>
+              <li>A printed <strong>results table</strong> with a header row, e.g. <em>Test | Result | Unit | Reference Range</em></li>
+              <li>At least <strong>3 numeric results</strong> and at least one <strong>reference range</strong></li>
+              <li>Typed, not handwritten. Text results like "Negative" are skipped</li>
+              <li>Anything else (invoices, letters, photos) is saved as <strong>Failed</strong> with the reason</li>
+            </ul>
+          </details>
+        </div>
+
+        <Pipeline stage={stage} steps={steps} progress={progress} failedStep={failedStep} />
       </div>
 
-      {step !== 'idle' && (
-        <ol className="pipeline">
-          {STEPS.map((s, i) => {
-            const state =
-              step === 'done' || i < stepIndex
-                ? 'done'
-                : i === stepIndex
-                  ? 'active'
-                  : step === 'error'
-                    ? 'idle'
-                    : 'idle';
-            return (
-              <li key={s.key} className={`pipe-step ${state}`}>
-                <span className="dot">{state === 'done' ? '✓' : i + 1}</span>
-                <div>
-                  <div className="pipe-label">
-                    {s.label}
-                    {s.key === 'uploading' && step === 'uploading' && ` · ${progress}%`}
-                  </div>
-                  <div className="muted small">{s.detail}</div>
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+      {error && (
+        <div className="alert error" role="alert"><Icon name="alert" /> {error}</div>
       )}
 
-      {error && <div className="alert error">⚠ {error}</div>}
+      {report && report.status === 'FAILED' && <Rejected report={report} />}
+      {report && report.status === 'DONE' && <Result report={report} totalMs={timings.total} onOpen={onOpen} />}
+    </div>
+  );
+}
 
-      {summary && (
-        <div className="result-card">
-          <div className="stats">
-            <Stat label="Tests found" value={summary.tests} />
-            <Stat label="Out of range" value={summary.abnormal} tone={summary.abnormal ? 'bad' : 'good'} />
-            <Stat label="Pages / tables" value={`${summary.pages} / ${summary.tables}`} />
-            <Stat label="Total time" value={`${summary.seconds}s`} />
-          </div>
+function Result({ report, totalMs, onOpen }: { report: Report; totalMs?: number; onOpen: (id: string) => void }) {
+  const abnormal = report.abnormalCount ?? 0;
+  return (
+    <section className="card result-card enter">
+      <div className="result-head">
+        <div>
+          <div className="eyebrow">Extraction complete</div>
+          <h2>{report.labName || report.fileName}</h2>
           <div className="muted small">
-            Textract mode: <strong>{summary.mode === 'async' ? 'Asynchronous job (PDF)' : 'Synchronous call (image)'}</strong>
+            {report.patientName ?? 'Unknown patient'} · Textract{' '}
+            <strong>{report.mode === 'async' ? 'async job (PDF)' : 'sync call (image)'}</strong> · {report.blockCount ?? 0} blocks
           </div>
-
-          <h3>Textract Queries</h3>
-          <table className="grid compact">
-            <thead>
-              <tr>
-                <th>Question asked</th>
-                <th>Answer</th>
-                <th>Confidence</th>
-              </tr>
-            </thead>
-            <tbody>
-              {summary.queryAnswers.map((q, i) => (
-                <tr key={i}>
-                  <td>{q.question}</td>
-                  <td>{q.answer ?? <span className="muted">not found</span>}</td>
-                  <td>{q.confidence != null ? `${q.confidence}%` : '–'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <button className="primary" onClick={() => onDone(summary.reportId)}>
-            View extracted results →
-          </button>
         </div>
+        <button className="btn-primary" onClick={() => onOpen(report.reportId)}>
+          View results <Icon name="arrow" size={16} />
+        </button>
+      </div>
+
+      <div className="stat-row">
+        <div className="stat"><div className="stat-value"><CountUp value={report.testCount ?? 0} /></div><div className="stat-label">tests found</div></div>
+        <div className={`stat ${abnormal ? 'bad' : 'good'}`}><div className="stat-value"><CountUp value={abnormal} /></div><div className="stat-label">out of range</div></div>
+        <div className="stat"><div className="stat-value"><CountUp value={report.pages ?? 1} /> / <CountUp value={report.tables ?? 0} /></div><div className="stat-label">pages / tables</div></div>
+        <div className="stat"><div className="stat-value"><CountUp value={(totalMs ?? 0) / 1000} decimals={1} />s</div><div className="stat-label">end to end</div></div>
+      </div>
+
+      {!!report.warnings?.length && (
+        <ul className="warnings">
+          {report.warnings.map((w) => <li key={w}><Icon name="alert" size={15} /> {w}</li>)}
+        </ul>
       )}
+
+      <h3 className="section-title">Textract Queries <span className="muted small">questions asked in plain English</span></h3>
+      <div className="queries">
+        {(report.queryAnswers ?? []).map((q, i) => (
+          <div key={i} className="query" style={{ ['--i' as string]: i }}>
+            <div className="query-q">{q.question}</div>
+            <div className="query-a">{q.answer ?? <span className="muted">not found</span>}</div>
+            <div className="conf">
+              <span className="conf-track"><span className="conf-fill" style={{ transform: `scaleX(${(q.confidence ?? 0) / 100})` }} /></span>
+              <span className="num small">{q.confidence != null ? `${q.confidence}%` : '–'}</span>
+            </div>
+          </div>
+        ))}
+      </div>
     </section>
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string | number; tone?: 'good' | 'bad' }) {
+function Rejected({ report }: { report: Report }) {
   return (
-    <div className={`stat ${tone ?? ''}`}>
-      <div className="stat-value">{value}</div>
-      <div className="stat-label">{label}</div>
-    </div>
+    <section className="card rejected enter" role="alert">
+      <div className="rejected-icon"><Icon name="x" size={22} /></div>
+      <div>
+        <div className="eyebrow bad-text">Not accepted</div>
+        <h2>{report.fileName}</h2>
+        <p>{report.errorMessage}</p>
+        <p className="muted small">
+          Textract found {report.tables ?? 0} table(s) in {report.blockCount ?? 0} blocks. The file is kept in
+          My reports as <strong>Failed</strong> so you can delete it.
+        </p>
+      </div>
+    </section>
   );
 }

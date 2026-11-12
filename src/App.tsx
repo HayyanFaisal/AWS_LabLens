@@ -1,66 +1,88 @@
-import { useState } from 'react';
-import { Authenticator } from '@aws-amplify/ui-react';
-import UploadPanel from './components/UploadPanel';
-import ReportList from './components/ReportList';
+import { useEffect, useState } from 'react';
+import { clearSession, loadSession, me, setUnauthorizedHandler, type Session } from './api';
+import AuthScreen from './components/AuthScreen';
 import ReportDetail from './components/ReportDetail';
+import ReportList from './components/ReportList';
 import Trends from './components/Trends';
+import UploadPanel from './components/UploadPanel';
+import { Icon, Logo } from './components/ui';
 
 type Tab = 'upload' | 'reports' | 'trends';
+const TABS: { key: Tab; label: string; icon: string }[] = [
+  { key: 'upload', label: 'Upload', icon: 'upload' },
+  { key: 'reports', label: 'My reports', icon: 'file' },
+  { key: 'trends', label: 'Health trends', icon: 'chart' },
+];
 
 export default function App() {
+  const [session, setSession] = useState<Session | null>(loadSession);
   const [tab, setTab] = useState<Tab>('upload');
   const [openReportId, setOpenReportId] = useState<string | null>(null);
 
-  const openReport = (id: string) => {
-    setOpenReportId(id);
-    setTab('reports');
+  // Any 401 from the API (expired or invalid token) signs the user out
+  useEffect(() => {
+    setUnauthorizedHandler(() => setSession(null));
+    if (session) me().catch(() => undefined); // checks a stored token is still valid
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const signOut = () => {
+    clearSession();
+    setSession(null);
+    setTab('upload');
+    setOpenReportId(null);
   };
 
+  if (!session) return <AuthScreen onSignedIn={setSession} />;
+
+  const go = (t: Tab) => {
+    setTab(t);
+    setOpenReportId(null);
+  };
+  const tabIndex = TABS.findIndex((t) => t.key === tab);
+
   return (
-    <Authenticator signUpAttributes={['email']}>
-      {({ signOut, user }) => (
-        <div className="app">
-          <header className="topbar">
-            <div className="brand">
-              <span className="logo">◉</span> LabLens
-              <span className="tagline">Lab report digitizer</span>
-            </div>
-            <nav className="tabs">
-              {(['upload', 'reports', 'trends'] as Tab[]).map((t) => (
-                <button
-                  key={t}
-                  className={tab === t ? 'tab active' : 'tab'}
-                  onClick={() => {
-                    setTab(t);
-                    if (t !== 'reports') setOpenReportId(null);
-                  }}
-                >
-                  {t === 'upload' ? 'Upload' : t === 'reports' ? 'My reports' : 'Health trends'}
-                </button>
-              ))}
-            </nav>
-            <div className="user">
-              <span>{user?.signInDetails?.loginId}</span>
-              <button className="ghost" onClick={signOut}>Sign out</button>
-            </div>
-          </header>
-
-          <main className="content">
-            {tab === 'upload' && <UploadPanel onDone={openReport} />}
-            {tab === 'reports' &&
-              (openReportId ? (
-                <ReportDetail reportId={openReportId} onBack={() => setOpenReportId(null)} />
-              ) : (
-                <ReportList onOpen={setOpenReportId} />
-              ))}
-            {tab === 'trends' && <Trends />}
-          </main>
-
-          <footer className="foot">
-            Built with AWS Amplify + Amazon Textract · For demonstration only, not medical advice
-          </footer>
+    <div className="app">
+      <header className="topbar">
+        <div className="topbar-inner">
+          <div className="brand">
+            <Logo />
+            <span className="brand-name">LabLens</span>
+          </div>
+          <nav className="tabs" aria-label="Sections">
+            <span className="tab-pill" style={{ transform: `translateX(${tabIndex * 100}%)` }} />
+            {TABS.map((t) => (
+              <button key={t.key} className={tab === t.key ? 'tab on' : 'tab'} onClick={() => go(t.key)} aria-current={tab === t.key}>
+                <Icon name={t.icon} size={16} />
+                <span>{t.label}</span>
+              </button>
+            ))}
+          </nav>
+          <div className="user">
+            <span className="avatar" aria-hidden="true">{session.username.slice(0, 1).toUpperCase()}</span>
+            <span className="user-name">{session.username}</span>
+            <button className="icon-btn" onClick={signOut} title="Sign out" aria-label="Sign out">
+              <Icon name="logout" size={17} />
+            </button>
+          </div>
         </div>
-      )}
-    </Authenticator>
+      </header>
+
+      <main className="content" key={`${tab}-${openReportId ?? ''}`}>
+        {tab === 'upload' && (
+          <UploadPanel onOpen={(id) => { setTab('reports'); setOpenReportId(id); }} />
+        )}
+        {tab === 'reports' &&
+          (openReportId ? (
+            <ReportDetail reportId={openReportId} onBack={() => setOpenReportId(null)} />
+          ) : (
+            <ReportList onOpen={setOpenReportId} />
+          ))}
+        {tab === 'trends' && <Trends />}
+      </main>
+
+      <footer className="foot">
+        Built with AWS Amplify + Amazon Textract · Hayyan Faisal &amp; Ali Sajjad · Demo only, not medical advice
+      </footer>
+    </div>
   );
 }
