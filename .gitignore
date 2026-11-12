@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.amplify/
+amplify_outputs.json
+.npm/
+.DS_Store
+.env*
+*.log
+cdk.out/
