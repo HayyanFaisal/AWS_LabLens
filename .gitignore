@@ -7,3 +7,4 @@ amplify_outputs.json
 .env*
 *.log
 cdk.out/
+.claude/

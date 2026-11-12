@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { clearSession, loadSession, me, setUnauthorizedHandler, type Session } from './api';
 import AuthScreen from './components/AuthScreen';
 import ReportDetail from './components/ReportDetail';
 import ReportList from './components/ReportList';
-import Trends from './components/Trends';
 import UploadPanel from './components/UploadPanel';
-import { Icon, Logo } from './components/ui';
+import { Icon, Logo, Spinner } from './components/ui';
+
+// The chart library is large, so it only loads when Trends is opened
+const Trends = lazy(() => import('./components/Trends'));
 
 type Tab = 'upload' | 'reports' | 'trends';
 const TABS: { key: Tab; label: string; icon: string }[] = [
@@ -77,7 +79,11 @@ export default function App() {
           ) : (
             <ReportList onOpen={setOpenReportId} />
           ))}
-        {tab === 'trends' && <Trends />}
+        {tab === 'trends' && (
+          <Suspense fallback={<div className="card center"><Spinner /></div>}>
+            <Trends />
+          </Suspense>
+        )}
       </main>
 
       <footer className="foot">
