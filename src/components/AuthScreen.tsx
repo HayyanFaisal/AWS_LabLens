@@ -1,15 +1,23 @@
 import { useState, type FormEvent } from 'react';
 import { login, register, type Session } from '../api';
-import { Logo, Spinner } from './ui';
+import { Icon, Logo, Spinner } from './ui';
 
 type Mode = 'login' | 'register';
+
+export const SIGNUP_STEPS = ['Account', 'Identity', 'Health profile', 'Review'];
 
 export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) => void }) {
   const [mode, setMode] = useState<Mode>('login');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const switchTo = (m: Mode) => {
+    setMode(m);
+    setError(null);
+  };
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -18,6 +26,7 @@ export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) =>
     if (mode === 'register') {
       if (!/^[a-z0-9_]{3,30}$/.test(u)) return setError('Username: 3-30 lowercase letters, numbers or _');
       if (password.length < 8) return setError('Password must be at least 8 characters');
+      if (password !== confirm) return setError('The two passwords do not match');
     }
     setBusy(true);
     try {
@@ -31,61 +40,78 @@ export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) =>
 
   return (
     <div className="auth">
-      <div className="auth-glow" aria-hidden="true" />
-      <section className="auth-left">
+      <section className="auth-main">
         <div className="auth-brand">
           <Logo size={34} />
           <span>LabLens</span>
         </div>
-        <h1 className="auth-title">
-          Paper lab reports in.
-          <br />
-          <span className="gradient-text">Health data out.</span>
-        </h1>
-        <p className="auth-sub">
-          Upload a photo or PDF of a blood test. Amazon Textract reads the results table, LabLens flags
-          every value against its reference range and tracks it over time.
-        </p>
 
-        <form className="auth-card" onSubmit={submit}>
-          <div className="seg" role="tablist">
-            <span className="seg-pill" style={{ transform: `translateX(${mode === 'login' ? 0 : 100}%)` }} />
-            <button type="button" role="tab" aria-selected={mode === 'login'} className={mode === 'login' ? 'on' : ''} onClick={() => { setMode('login'); setError(null); }}>
-              Sign in
+        <div className="auth-form-wrap">
+          {mode === 'login' ? (
+            <>
+              <h1>Welcome back</h1>
+              <p className="page-sub">Sign in to see your lab results, trends and health profile.</p>
+            </>
+          ) : (
+            <>
+              <ol className="mini-steps" aria-label="Sign-up steps">
+                {SIGNUP_STEPS.map((s, i) => (
+                  <li key={s} className={i === 0 ? 'on' : ''}><span>{i + 1}</span>{s}</li>
+                ))}
+              </ol>
+              <h1>Create your account</h1>
+              <p className="page-sub">Next you will add your identity (or scan your ID card) and a short health profile.</p>
+            </>
+          )}
+
+          <form className="auth-form" onSubmit={submit}>
+            <label className="field">
+              <span>Username</span>
+              <input autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="e.g. hayyan" required />
+            </label>
+            <label className="field">
+              <span>Password</span>
+              <input type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={mode === 'register' ? 'At least 8 characters' : '••••••••'} required />
+            </label>
+            {mode === 'register' && (
+              <label className="field">
+                <span>Confirm password</span>
+                <input type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Type it again" required />
+              </label>
+            )}
+
+            {error && <div className="form-error" role="alert"><Icon name="alert" size={16} /> {error}</div>}
+
+            <button className="btn-primary btn-lg" disabled={busy}>
+              {busy ? <Spinner /> : mode === 'login' ? 'Sign in' : <>Continue <Icon name="arrow" size={17} /></>}
             </button>
-            <button type="button" role="tab" aria-selected={mode === 'register'} className={mode === 'register' ? 'on' : ''} onClick={() => { setMode('register'); setError(null); }}>
-              Create account
-            </button>
-          </div>
+          </form>
 
-          <label className="field">
-            <span>Username</span>
-            <input autoComplete="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="e.g. hayyan" required />
-          </label>
-          <label className="field">
-            <span>Password</span>
-            <input type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder={mode === 'register' ? 'At least 8 characters' : '••••••••'} required />
-          </label>
-
-          {error && <div className="auth-error" role="alert">{error}</div>}
-
-          <button className="btn-glow" disabled={busy}>
-            {busy ? <Spinner /> : mode === 'login' ? 'Sign in' : 'Create account'}
-          </button>
-          <p className="auth-fine">
-            Passwords are hashed with scrypt; sessions are HMAC-signed tokens valid for 12 hours.
+          <p className="auth-switch">
+            {mode === 'login' ? (
+              <>New to LabLens? <button type="button" onClick={() => switchTo('register')}>Create an account</button></>
+            ) : (
+              <>Already have an account? <button type="button" onClick={() => switchTo('login')}>Sign in</button></>
+            )}
           </p>
-        </form>
 
-        <div className="auth-powered">
-          <span className="chip-dark">AWS Amplify</span>
-          <span className="chip-dark">Amazon Textract</span>
-          <span className="chip-dark">Lambda · S3 · DynamoDB</span>
+          <p className="fine"><Icon name="lock" size={14} /> Passwords are hashed with scrypt. Sessions are signed tokens valid for 12 hours.</p>
         </div>
+
+        <footer className="auth-foot">AWS Amplify + Amazon Textract · Hayyan Faisal &amp; Ali Sajjad · Demo only, not medical advice</footer>
       </section>
 
-      <section className="auth-right" aria-hidden="true">
-        <ScanVisual />
+      <section className="auth-side" aria-hidden="true">
+        <div className="auth-side-inner">
+          <div className="side-kicker"><span className="dot-live" /> Powered by Amazon Textract</div>
+          <h2>Paper lab reports in.<br />Clear health data out.</h2>
+          <ScanVisual />
+          <ul className="side-points">
+            <li><Icon name="scan" size={18} /> Reads result tables from photos and PDFs</li>
+            <li><Icon name="pulse" size={18} /> Flags every value Low, Normal or High</li>
+            <li><Icon name="chart" size={18} /> Tracks each test across all your reports</li>
+          </ul>
+        </div>
       </section>
     </div>
   );
@@ -97,41 +123,33 @@ const SCAN_ROWS: { name: string; value: string; range: string; flag: 'HIGH' | 'L
   { name: 'Fasting Glucose', value: '128', range: '70 – 100', flag: 'HIGH' },
   { name: 'HbA1c', value: '7.1', range: '4.0 – 5.6', flag: 'HIGH' },
   { name: 'Creatinine', value: '1.0', range: '0.7 – 1.3', flag: 'NORMAL' },
-  { name: 'Vitamin D', value: '14', range: '30 – 100', flag: 'LOW' },
 ];
 
 /** A mock report being "read": a scan line sweeps down and each row gets a Textract-style box. */
 function ScanVisual() {
   return (
-    <div className="scan-stage">
-      <div className="scan-sheet">
-        <div className="sheet-head">
-          <div className="sheet-title" />
-          <div className="sheet-line w60" />
-          <div className="sheet-info">
-            <span className="q-tag">PATIENT_NAME · Ali Raza · 99%</span>
-            <span className="q-tag d2">REPORT_DATE · 2026-03-14 · 98%</span>
-          </div>
+    <div className="scan-sheet">
+      <div className="sheet-head">
+        <div className="sheet-title" />
+        <div className="sheet-line" />
+        <div className="sheet-info">
+          <span className="q-tag">PATIENT_NAME · Ali Raza · 99%</span>
+          <span className="q-tag d2">REPORT_DATE · 2026-03-14 · 98%</span>
         </div>
-        <div className="sheet-table">
-          <div className="sheet-row head">
-            <span>Test</span><span>Result</span><span>Range</span>
+      </div>
+      <div className="sheet-table">
+        <div className="sheet-row head"><span>Test</span><span>Result</span><span>Range</span></div>
+        {SCAN_ROWS.map((r, i) => (
+          <div key={r.name} className="sheet-row" style={{ ['--i' as string]: i }}>
+            <span>{r.name}</span>
+            <span className="num">{r.value}</span>
+            <span className="num">{r.range}</span>
+            <span className={`scan-box ${r.flag.toLowerCase()}`} />
+            <span className={`scan-flag ${r.flag.toLowerCase()}`}>{r.flag}</span>
           </div>
-          {SCAN_ROWS.map((r, i) => (
-            <div key={r.name} className={`sheet-row r${i}`} style={{ ['--i' as string]: i }}>
-              <span>{r.name}</span>
-              <span className="num">{r.value}</span>
-              <span className="num">{r.range}</span>
-              <span className={`scan-box ${r.flag.toLowerCase()}`} />
-              <span className={`scan-flag ${r.flag.toLowerCase()}`}>{r.flag}</span>
-            </div>
-          ))}
-        </div>
-        <div className="scan-line" />
+        ))}
       </div>
-      <div className="scan-caption">
-        <span className="dot-live" /> Textract · TABLES + QUERIES
-      </div>
+      <div className="scan-line" />
     </div>
   );
 }

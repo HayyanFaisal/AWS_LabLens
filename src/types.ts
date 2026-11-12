@@ -54,3 +54,49 @@ export interface Report extends ReportSummary {
   queryAnswers?: QueryAnswer[];
   tests?: TestResult[];
 }
+
+export type Sex = 'female' | 'male' | 'other';
+export const BLOOD_GROUPS = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'unknown'] as const;
+export type BloodGroup = (typeof BLOOD_GROUPS)[number];
+
+/** Health profile collected at sign-up (amplify/functions/api/profile-rules.ts). */
+export interface Profile {
+  fullName: string;
+  dateOfBirth: string;
+  sex: Sex;
+  phone: string | null;
+  bloodGroup: BloodGroup;
+  heightCm: number | null;
+  weightKg: number | null;
+  conditions: string[];
+  medications: string[];
+  allergies: string[];
+  idLast4: string | null;
+  filledFromId: boolean;
+  completedAt?: string;
+  updatedAt?: string;
+}
+
+export interface Account {
+  username: string;
+  createdAt: string | null;
+  profile: Profile | null;
+}
+
+export interface IdField {
+  field: 'fullName' | 'dateOfBirth' | 'sex' | 'idLast4';
+  label: string;
+  value: string | null;
+  raw: string | null;
+  confidence: number | null;
+}
+
+export interface IdScan {
+  fullName: string | null;
+  dateOfBirth: string | null;
+  sex: 'male' | 'female' | null;
+  idLast4: string | null;
+  fields: IdField[];
+  textractMs: number;
+  blockCount: number;
+}

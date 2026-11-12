@@ -1,5 +1,5 @@
 /**
- * Dark "what AWS is doing right now" card. Nodes light up and a beam travels
+ * "What AWS is doing right now" card. Nodes light up and a beam travels
  * along each link as the upload moves through Upload -> Analyze -> Save.
  */
 export type Stage = 'idle' | 'upload' | 'analyze' | 'save' | 'done' | 'error';

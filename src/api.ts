@@ -4,7 +4,7 @@
  * the backend, so it is never hard-coded.
  */
 import outputs from '../amplify_outputs.json';
-import type { Report, ReportSummary } from './types';
+import type { Account, IdScan, Profile, Report, ReportSummary } from './types';
 
 const API_URL = String((outputs as { custom?: { apiUrl?: string } }).custom?.apiUrl ?? '').replace(/\/+$/, '');
 
@@ -91,6 +91,14 @@ async function authenticate(kind: 'login' | 'register', username: string, passwo
 export const login = (u: string, p: string) => authenticate('login', u, p);
 export const register = (u: string, p: string) => authenticate('register', u, p);
 export const me = () => request<{ username: string }>('GET', '/auth/me');
+
+// ---------- profile ----------
+export const getAccount = () => request<Account>('GET', '/profile');
+export const saveProfile = (p: Omit<Profile, 'completedAt' | 'updatedAt'>) =>
+  request<{ username: string; profile: Profile }>('PUT', '/profile', p).then((r) => r.profile);
+export const getIdUploadUrl = (fileName: string, size: number) =>
+  request<{ uploadUrl: string; fileKey: string; contentType: string }>('POST', '/profile/id-upload-url', { fileName, size });
+export const scanId = (fileKey: string) => request<IdScan>('POST', '/profile/scan-id', { fileKey });
 
 // ---------- reports ----------
 export const getUploadUrl = (fileName: string, size: number) =>

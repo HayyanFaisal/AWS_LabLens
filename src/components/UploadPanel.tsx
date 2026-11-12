@@ -1,9 +1,10 @@
 import { useRef, useState } from 'react';
 import { analyze, getUploadUrl, uploadToS3 } from '../api';
 import { formatMs } from '../lib/format';
+import { invalidateReports, nameMatch } from '../lib/health';
 import type { Report } from '../types';
 import Pipeline, { type Stage, type StepInfo } from './Pipeline';
-import { CountUp, Icon } from './ui';
+import { CountUp, Icon, PageHeader } from './ui';
 
 const ACCEPT = /\.(png|jpe?g|pdf|tiff?)$/i;
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -15,7 +16,7 @@ interface Timings {
   total?: number;
 }
 
-export default function UploadPanel({ onOpen }: { onOpen: (reportId: string) => void }) {
+export default function UploadPanel({ onOpen, profileName }: { onOpen: (reportId: string) => void; profileName: string }) {
   const [stage, setStage] = useState<Stage>('idle');
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
@@ -51,7 +52,16 @@ export default function UploadPanel({ onOpen }: { onOpen: (reportId: string) => 
       step = 1;
       setStage('analyze');
       const result = await analyze(fileKey, file.name);
+      invalidateReports(); // dashboard and trends reload with the new report
       const t2 = performance.now();
+      if (result.status === 'FAILED' && !result.blockCount) {
+        // Textract itself failed (no blocks came back): show it on the Analyze step
+        setTimings({ upload: t1 - t0 });
+        setReport(result);
+        setFailedStep(1);
+        setStage('error');
+        return;
+      }
       setStage('save');
       await new Promise((r) => setTimeout(r, 450)); // let the "Save" step be visible
       setTimings({ upload: t1 - t0, analyze: result.textractMs, save: result.saveMs, total: t2 - t0 });
@@ -72,13 +82,11 @@ export default function UploadPanel({ onOpen }: { onOpen: (reportId: string) => 
 
   return (
     <div className="page">
-      <header className="page-head">
-        <div>
-          <div className="hero-eyebrow"><span className="dot-live" /> Amazon Textract · TABLES + QUERIES</div>
-          <h1>Read any lab report in seconds.</h1>
-          <p className="muted">A photo (PNG/JPG) or a PDF. It goes into your private S3 folder, Textract reads it, and the results are saved to your history.</p>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow={<><span className="dot-live" /> Amazon Textract · TABLES + QUERIES</>}
+        title="Scan a lab report"
+        subtitle="Upload a photo (PNG/JPG) or a PDF. It goes into your private S3 folder, Textract reads the results table, and everything is saved to your history."
+      />
 
       <div className="upload-grid">
         <div className="card">
@@ -123,13 +131,14 @@ export default function UploadPanel({ onOpen }: { onOpen: (reportId: string) => 
       )}
 
       {report && report.status === 'FAILED' && <Rejected report={report} />}
-      {report && report.status === 'DONE' && <Result report={report} totalMs={timings.total} onOpen={onOpen} />}
+      {report && report.status === 'DONE' && <Result report={report} totalMs={timings.total} onOpen={onOpen} profileName={profileName} />}
     </div>
   );
 }
 
-function Result({ report, totalMs, onOpen }: { report: Report; totalMs?: number; onOpen: (id: string) => void }) {
+function Result({ report, totalMs, onOpen, profileName }: { report: Report; totalMs?: number; onOpen: (id: string) => void; profileName: string }) {
   const abnormal = report.abnormalCount ?? 0;
+  const match = nameMatch(profileName, report.patientName);
   return (
     <section className="card result-card enter">
       <div className="result-head">
@@ -147,11 +156,15 @@ function Result({ report, totalMs, onOpen }: { report: Report; totalMs?: number;
       </div>
 
       <div className="stat-row">
-        <div className="stat"><div className="stat-value"><CountUp value={report.testCount ?? 0} /></div><div className="stat-label">tests found</div></div>
-        <div className={`stat ${abnormal ? 'bad' : 'good'}`}><div className="stat-value"><CountUp value={abnormal} /></div><div className="stat-label">out of range</div></div>
-        <div className="stat indigo"><div className="stat-value"><CountUp value={report.pages ?? 1} /> / <CountUp value={report.tables ?? 0} /></div><div className="stat-label">pages / tables</div></div>
-        <div className="stat violet"><div className="stat-value"><CountUp value={(totalMs ?? 0) / 1000} decimals={1} />s</div><div className="stat-label">end to end</div></div>
+        <div className="stat"><Icon name="file" /><div className="stat-value"><CountUp value={report.testCount ?? 0} /></div><div className="stat-label">tests found</div></div>
+        <div className={`stat ${abnormal ? 'bad' : 'good'}`}><Icon name={abnormal ? 'alert' : 'check'} /><div className="stat-value"><CountUp value={abnormal} /></div><div className="stat-label">out of range</div></div>
+        <div className="stat"><Icon name="scan" /><div className="stat-value"><CountUp value={report.pages ?? 1} /> / <CountUp value={report.tables ?? 0} /></div><div className="stat-label">pages / tables</div></div>
+        <div className="stat"><Icon name="pulse" /><div className="stat-value"><CountUp value={(totalMs ?? 0) / 1000} decimals={1} />s</div><div className="stat-label">end to end</div></div>
       </div>
+
+      {match === 'mismatch' && (
+        <div className="alert warn"><Icon name="alert" /> This report is for <strong>{report.patientName}</strong>, not {profileName}. It is saved, but check it belongs in your history.</div>
+      )}
 
       {!!report.warnings?.length && (
         <ul className="warnings">
