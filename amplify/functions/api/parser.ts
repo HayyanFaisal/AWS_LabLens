@@ -22,6 +22,16 @@ export interface TBlock {
   Page?: number;
   Query?: { Text?: string; Alias?: string };
   Relationships?: { Type?: string; Ids?: string[] }[];
+  /** Position on the page as fractions (0..1) of page width/height. */
+  Geometry?: { BoundingBox?: { Left?: number; Top?: number; Width?: number; Height?: number } };
+}
+
+/** Where a test row sits on its page, as fractions of the page (0..1). */
+export interface Box {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
 }
 
 export type Flag = 'LOW' | 'NORMAL' | 'HIGH' | 'UNKNOWN';
@@ -37,6 +47,8 @@ export interface ExtractedTest {
   flag: Flag;
   confidence: number | null;
   page: number | null;
+  /** Union of the row's cells: lets the UI draw a box over the original image. */
+  box?: Box | null;
 }
 
 export interface QueryAnswer {
@@ -179,7 +191,25 @@ export function normalizeDate(raw: string | null | undefined): string | null {
 
 interface Grid {
   page: number;
-  rows: { text: string[]; conf: number[] }[];
+  rows: { text: string[]; conf: number[]; boxes: (Box | null)[] }[];
+}
+
+function boxOf(block: TBlock): Box | null {
+  const b = block.Geometry?.BoundingBox;
+  if (!b || b.Left == null || b.Top == null || b.Width == null || b.Height == null) return null;
+  return { left: b.Left, top: b.Top, width: b.Width, height: b.Height };
+}
+
+/** Smallest box containing all given boxes (null if none have geometry). */
+export function unionBox(boxes: (Box | null | undefined)[]): Box | null {
+  const valid = boxes.filter((b): b is Box => !!b);
+  if (!valid.length) return null;
+  const left = Math.min(...valid.map((b) => b.left));
+  const top = Math.min(...valid.map((b) => b.top));
+  const right = Math.max(...valid.map((b) => b.left + b.width));
+  const bottom = Math.max(...valid.map((b) => b.top + b.height));
+  const r4 = (n: number) => Math.round(n * 10000) / 10000;
+  return { left: r4(left), top: r4(top), width: r4(right - left), height: r4(bottom - top) };
 }
 
 function buildGrids(blocks: TBlock[], index: Map<string, TBlock>): Grid[] {
@@ -192,9 +222,10 @@ function buildGrids(blocks: TBlock[], index: Map<string, TBlock>): Grid[] {
         if (!cell || cell.BlockType !== 'CELL') continue;
         const r = (cell.RowIndex ?? 1) - 1;
         const c = (cell.ColumnIndex ?? 1) - 1;
-        rows[r] ??= { text: [], conf: [] };
+        rows[r] ??= { text: [], conf: [], boxes: [] };
         rows[r].text[c] = textOf(cell, index);
         rows[r].conf[c] = cell.Confidence ?? 0;
+        rows[r].boxes[c] = boxOf(cell);
       }
       const width = Math.max(0, ...rows.filter(Boolean).map((r) => r.text.length));
       const filled = rows
@@ -202,6 +233,7 @@ function buildGrids(blocks: TBlock[], index: Map<string, TBlock>): Grid[] {
         .map((r) => ({
           text: Array.from({ length: width }, (_, i) => r.text[i] ?? ''),
           conf: Array.from({ length: width }, (_, i) => r.conf[i] ?? 0),
+          boxes: Array.from({ length: width }, (_, i) => r.boxes[i] ?? null),
         }));
       return { page: table.Page ?? 1, rows: filled };
     });
@@ -261,6 +293,7 @@ function rowToTest(
     flag: computeFlag(value, low, high, get(map.flag)),
     confidence: Math.round(confidence * 10) / 10,
     page,
+    box: unionBox(row.boxes),
   };
 }
 

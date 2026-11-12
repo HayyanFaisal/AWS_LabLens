@@ -10,6 +10,7 @@ import {
   parseNumber,
   normalizeDate,
   computeFlag,
+  unionBox,
   type TBlock,
 } from './parser';
 
@@ -138,5 +139,43 @@ assert.equal(byName['Total Cholesterol'].flag, 'HIGH');
 assert.equal(byName['Total Cholesterol'].page, 2);
 assert.equal(byName['HDL Cholesterol'].flag, 'NORMAL');
 assert.equal(byName['Hemoglobin'].unit, 'g/dL');
+
+// ---- bounding boxes (used to draw boxes over the original image) ----
+assert.deepEqual(
+  unionBox([
+    { left: 0.1, top: 0.2, width: 0.2, height: 0.05 },
+    { left: 0.3, top: 0.2, width: 0.1, height: 0.06 },
+    null,
+  ]),
+  { left: 0.1, top: 0.2, width: 0.3, height: 0.06 },
+);
+assert.equal(unionBox([null, undefined]), null);
+assert.equal(byName['Hemoglobin'].box, null, 'no Geometry in input -> no box');
+
+const geoBlocks: TBlock[] = [{ Id: id(), BlockType: 'PAGE', Page: 1 }];
+makeTable(
+  [
+    ['Test', 'Result', 'Unit', 'Reference Range'],
+    ['HbA1c', '7.1', '%', '4.0 - 5.6'],
+  ],
+  1,
+  geoBlocks,
+);
+for (const b of geoBlocks) {
+  if (b.BlockType !== 'CELL') continue;
+  // every cell is 0.2 wide and 0.04 tall; columns start at x=0.1, rows at y=0.3
+  b.Geometry = {
+    BoundingBox: {
+      Left: 0.1 + (b.ColumnIndex! - 1) * 0.2,
+      Top: 0.3 + (b.RowIndex! - 1) * 0.04,
+      Width: 0.2,
+      Height: 0.04,
+    },
+  };
+}
+const geo = parseTextract(geoBlocks, 'sync');
+assert.equal(geo.tests.length, 1);
+assert.deepEqual(geo.tests[0].box, { left: 0.1, top: 0.34, width: 0.8, height: 0.04 });
+assert.equal(geo.tests[0].flag, 'HIGH');
 
 console.log('\nAll parser tests passed.');

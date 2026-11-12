@@ -1,13 +1,18 @@
+/**
+ * Calls Amazon Textract with two features:
+ *   TABLES  - rebuilds the results table as rows and cells
+ *   QUERIES - answers questions like "What is the patient name?"
+ * Images use the synchronous API; PDFs (possibly multi-page) use the async job API.
+ */
 import {
-  TextractClient,
   AnalyzeDocumentCommand,
-  StartDocumentAnalysisCommand,
   GetDocumentAnalysisCommand,
+  StartDocumentAnalysisCommand,
+  TextractClient,
   type Block,
   type FeatureType,
 } from '@aws-sdk/client-textract';
-import type { Schema } from '../../data/resource';
-import { parseTextract, QUERIES } from './parser';
+import { QUERIES } from './parser';
 
 const textract = new TextractClient({});
 
@@ -18,8 +23,8 @@ const QUERIES_CONFIG = {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Images (PNG/JPG) -> synchronous AnalyzeDocument: one call, instant answer. */
-async function analyzeSync(bucket: string, key: string): Promise<Block[]> {
+/** Images (PNG/JPG/TIFF) -> synchronous AnalyzeDocument: one call, instant answer. */
+export async function analyzeSync(bucket: string, key: string): Promise<Block[]> {
   const res = await textract.send(
     new AnalyzeDocumentCommand({
       Document: { S3Object: { Bucket: bucket, Name: key } },
@@ -31,11 +36,11 @@ async function analyzeSync(bucket: string, key: string): Promise<Block[]> {
 }
 
 /**
- * PDFs (can be multi-page) -> asynchronous job:
+ * PDFs -> asynchronous job:
  * StartDocumentAnalysis returns a JobId, we poll GetDocumentAnalysis until
  * the job finishes, then page through all result blocks with NextToken.
  */
-async function analyzeAsync(bucket: string, key: string): Promise<Block[]> {
+export async function analyzeAsync(bucket: string, key: string): Promise<Block[]> {
   const start = await textract.send(
     new StartDocumentAnalysisCommand({
       DocumentLocation: { S3Object: { Bucket: bucket, Name: key } },
@@ -71,23 +76,17 @@ async function analyzeAsync(bucket: string, key: string): Promise<Block[]> {
   return blocks;
 }
 
-export const handler: Schema['processReport']['functionHandler'] = async (event) => {
-  const { fileKey } = event.arguments;
-  const bucket = process.env.BUCKET_NAME;
-  if (!bucket) throw new Error('BUCKET_NAME is not configured');
-
-  // Only accept files from the private reports area, with supported types
-  if (!fileKey.startsWith('reports/') || fileKey.includes('..')) {
-    throw new Error('Invalid file key');
-  }
-  if (!/\.(png|jpe?g|pdf|tiff?)$/i.test(fileKey)) {
-    throw new Error('Unsupported file type. Use PNG, JPG, PDF or TIFF.');
-  }
-
-  const isPdf = /\.pdf$/i.test(fileKey);
-  const t0 = Date.now();
-  const blocks = isPdf ? await analyzeAsync(bucket, fileKey) : await analyzeSync(bucket, fileKey);
-  console.log(`Textract returned ${blocks.length} blocks in ${Date.now() - t0} ms`);
-
-  return parseTextract(blocks, isPdf ? 'async' : 'sync');
-};
+/** Turns Textract error names into messages a user can act on. */
+export function friendlyTextractError(err: unknown): string {
+  const name = (err as { name?: string })?.name ?? '';
+  const map: Record<string, string> = {
+    UnsupportedDocumentException: 'Textract cannot read this file format or the file is damaged.',
+    BadDocumentException: 'Textract could not open this document. Try a clearer scan or a PNG/JPG.',
+    DocumentTooLargeException: 'The document is too large for Textract (images must be under 10 MB).',
+    InvalidS3ObjectException: 'Textract could not find the uploaded file in S3.',
+    ProvisionedThroughputExceededException: 'Textract is busy right now. Please try again in a moment.',
+    ThrottlingException: 'Textract is busy right now. Please try again in a moment.',
+    AccessDeniedException: 'The API is not allowed to call Textract (check the Lambda IAM role).',
+  };
+  return map[name] ?? (err instanceof Error ? err.message : 'Textract failed');
+}
