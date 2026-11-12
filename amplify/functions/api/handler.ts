@@ -12,6 +12,7 @@ import { verifyToken } from './auth';
 import { env } from './aws';
 import { HttpError, json, parseBody } from './http';
 import { login, register } from './users';
+import { demoLogin } from './demo';
 import { createIdUploadUrl, getProfile, saveProfile, scanIdCard } from './profile';
 import {
   analyzeReport,
@@ -39,6 +40,7 @@ interface Route {
 const routes: Route[] = [
   { method: 'POST', path: /^\/auth\/register$/, auth: false, status: 201, run: (c) => register(c.body) },
   { method: 'POST', path: /^\/auth\/login$/, auth: false, run: (c) => login(c.body) },
+  { method: 'POST', path: /^\/auth\/demo$/, auth: false, run: (c) => demoLogin(c.body) },
   { method: 'GET', path: /^\/auth\/me$/, auth: true, run: async (c) => ({ username: c.username }) },
   { method: 'GET', path: /^\/profile$/, auth: true, run: (c) => getProfile(c.username) },
   { method: 'PUT', path: /^\/profile$/, auth: true, run: (c) => saveProfile(c.username, c.body) },

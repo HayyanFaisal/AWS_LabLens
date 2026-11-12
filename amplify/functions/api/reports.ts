@@ -28,7 +28,7 @@ const FILE_URL_SECONDS = 15 * 60;
 /** Fields returned by GET /reports (the list view does not need every test). */
 const SUMMARY_FIELDS = [
   'reportId', 'fileName', 'patientName', 'labName', 'reportDate', 'pages', 'mode',
-  'status', 'errorMessage', 'testCount', 'abnormalCount', 'createdAt',
+  'status', 'errorMessage', 'testCount', 'abnormalCount', 'createdAt', 'demo',
 ];
 // Several of these ("status", "mode", ...) are DynamoDB reserved words, so every
 // field goes through a placeholder: ProjectionExpression "#f0, #f1, ..."
@@ -198,6 +198,9 @@ export async function getReport(username: string, reportId: string) {
 // ---------- GET /reports/{id}/file-url ----------
 export async function getFileUrl(username: string, reportId: string) {
   const report = await getReport(username, reportId);
+  // Demo reports point at sample files shipped with the website (public/demo/)
+  if (report.demo && typeof report.fileKey === 'string' && report.fileKey.startsWith('demo/'))
+    return { url: `/${report.fileKey}`, expiresIn: null };
   const url = await getSignedUrl(
     s3,
     new GetObjectCommand({ Bucket: env.bucket(), Key: report.fileKey }),
@@ -209,7 +212,7 @@ export async function getFileUrl(username: string, reportId: string) {
 // ---------- DELETE /reports/{id} ----------
 export async function deleteReport(username: string, reportId: string) {
   const report = await getReport(username, reportId);
-  await s3.send(new DeleteObjectCommand({ Bucket: env.bucket(), Key: report.fileKey }));
+  if (!report.demo) await s3.send(new DeleteObjectCommand({ Bucket: env.bucket(), Key: report.fileKey }));
   await ddb.send(new DeleteCommand({ TableName: env.reportsTable(), Key: { username, reportId } }));
   return { deleted: reportId };
 }

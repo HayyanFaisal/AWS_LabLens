@@ -89,6 +89,12 @@ async function authenticate(kind: 'login' | 'register', username: string, passwo
   return s;
 }
 export const login = (u: string, p: string) => authenticate('login', u, p);
+/** One-click demo profiles: the API (re)creates the demo account and returns a token. */
+export async function demoLogin(profile: 'ali' | 'sara') {
+  const s = await request<Session>('POST', '/auth/demo', { profile }, false);
+  saveSession(s);
+  return s;
+}
 export const register = (u: string, p: string) => authenticate('register', u, p);
 export const me = () => request<{ username: string }>('GET', '/auth/me');
 

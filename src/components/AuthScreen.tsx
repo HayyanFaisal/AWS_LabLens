@@ -1,10 +1,16 @@
 import { useState, type FormEvent } from 'react';
-import { login, register, type Session } from '../api';
+import { demoLogin, login, register, type Session } from '../api';
 import { Icon, Logo, Spinner } from './ui';
 
 type Mode = 'login' | 'register';
 
 export const SIGNUP_STEPS = ['Account', 'Identity', 'Health profile', 'Review'];
+
+/** Pre-filled demo accounts (created by POST /auth/demo, reset on every demo sign-in). */
+const DEMOS = [
+  { key: 'ali' as const, initials: 'AR', name: 'Ali Raza', meta: '36 · Male · Type 2 diabetes', detail: '7 reports · Dec 2025 – Nov 2026 · ID scanned', color: '#0077b6' },
+  { key: 'sara' as const, initials: 'SK', name: 'Sara Khan', meta: '27 · Female · Anaemia', detail: '3 reports · Mar – Sep 2026 · ID scanned', color: '#b45309' },
+];
 
 export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) => void }) {
   const [mode, setMode] = useState<Mode>('login');
@@ -13,6 +19,18 @@ export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) =>
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [demoBusy, setDemoBusy] = useState<string | null>(null);
+
+  async function openDemo(key: 'ali' | 'sara') {
+    setError(null);
+    setDemoBusy(key);
+    try {
+      onSignedIn(await demoLogin(key));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setDemoBusy(null);
+    }
+  }
 
   const switchTo = (m: Mode) => {
     setMode(m);
@@ -94,6 +112,21 @@ export default function AuthScreen({ onSignedIn }: { onSignedIn: (s: Session) =>
               <>Already have an account? <button type="button" onClick={() => switchTo('login')}>Sign in</button></>
             )}
           </p>
+
+          <div className="divider"><span>or explore a demo profile</span></div>
+          <div className="demo-list">
+            {DEMOS.map((d) => (
+              <button key={d.key} type="button" className="demo-card" onClick={() => openDemo(d.key)} disabled={!!demoBusy}>
+                <span className="demo-avatar" style={{ background: d.color }}>{d.initials}</span>
+                <span className="demo-text">
+                  <strong>{d.name}</strong>
+                  <small>{d.meta}</small>
+                  <small className="demo-detail">{d.detail}</small>
+                </span>
+                {demoBusy === d.key ? <Spinner /> : <Icon name="arrow" size={18} />}
+              </button>
+            ))}
+          </div>
 
           <p className="fine"><Icon name="lock" size={14} /> Passwords are hashed with scrypt. Sessions are signed tokens valid for 12 hours.</p>
         </div>

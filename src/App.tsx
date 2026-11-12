@@ -114,7 +114,7 @@ export default function App() {
           <span className="avatar">{initials}</span>
           <span className="su-text">
             <strong>{profile.fullName}</strong>
-            <small>@{account.username}</small>
+            <small>{account.demo ? <span className="chip demo">Demo profile</span> : `@${account.username}`}</small>
           </span>
           <button className="icon-btn" onClick={signOut} title="Sign out" aria-label="Sign out"><Icon name="logout" size={17} /></button>
         </div>
@@ -135,7 +135,7 @@ export default function App() {
               <Trends initialKey={trendKey} />
             </Suspense>
           )}
-          {page === 'profile' && <ProfilePage username={account.username} createdAt={account.createdAt} profile={profile} onSaved={setProfile} />}
+          {page === 'profile' && <ProfilePage username={account.username} createdAt={account.createdAt} profile={profile} onSaved={setProfile} demo={!!account.demo} />}
         </main>
 
         <footer className="foot">

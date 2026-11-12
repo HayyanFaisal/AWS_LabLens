@@ -86,7 +86,7 @@ export default function Trends({ initialKey }: { initialKey?: string | null }) {
               <span className="num big">{latest(current).raw}</span>
               <span className="muted small">{current.unit}</span>
               <FlagBadge flag={latest(current).flag} />
-              {dir && <span className={`trend-chip ${dir}`}>{dir === 'better' ? 'Improving' : dir === 'worse' ? 'Worsening' : 'No change'}</span>}
+              {dir && <span className={`trend-chip ${dir === 'same' && latest(current).flag === 'NORMAL' ? 'better' : dir}`}>{dir === 'better' ? 'Improving' : dir === 'worse' ? 'Worsening' : latest(current).flag === 'NORMAL' ? 'Still in range' : 'No change'}</span>}
             </div>
           </div>
           <TrendChart s={current} />

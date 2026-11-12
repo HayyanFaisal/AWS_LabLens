@@ -42,6 +42,7 @@ export interface ReportSummary {
   testCount?: number;
   abnormalCount?: number;
   createdAt: string;
+  demo?: boolean; // preloaded demo report (login screen demo profiles)
 }
 
 export interface Report extends ReportSummary {
@@ -81,6 +82,7 @@ export interface Account {
   username: string;
   createdAt: string | null;
   profile: Profile | null;
+  demo?: boolean;
 }
 
 export interface IdField {

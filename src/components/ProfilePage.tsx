@@ -6,7 +6,8 @@ import type { IdScan, Profile } from '../types';
 import { fromProfile, healthProblem, HealthFields, identityProblem, IdentityFields, IdScanner, toProfile, type Draft } from './ProfileForm';
 import { Icon, PageHeader, Spinner } from './ui';
 
-export default function ProfilePage({ username, createdAt, profile, onSaved }: {
+export default function ProfilePage({ username, createdAt, profile, onSaved, demo = false }: {
+  demo?: boolean;
   username: string;
   createdAt: string | null;
   profile: Profile;
@@ -90,9 +91,14 @@ export default function ProfilePage({ username, createdAt, profile, onSaved }: {
               <dt>Age</dt><dd>{ageFrom(profile.dateOfBirth)} years</dd>
               <dt>Sex</dt><dd className="cap">{profile.sex}</dd>
               <dt>Phone</dt><dd>{profile.phone ?? '—'}</dd>
-              <dt>ID card</dt><dd>{profile.idLast4 ? <>•••• {profile.idLast4} <span className="chip ok">verified with Textract</span></> : 'Not scanned'}</dd>
+              <dt>ID card</dt><dd>{profile.idLast4 ? <>•••• {profile.idLast4} {demo ? <span className="chip demo">demo ID card</span> : <span className="chip ok">read by Textract</span>}</> : 'Not scanned'}</dd>
               <dt>Member since</dt><dd>{createdAt ? formatDate(createdAt) : '—'}</dd>
             </dl>
+            {demo && (
+              <a className="id-thumb" href={`/demo/id-card-${profile.fullName.toLowerCase().replace(/\s+/g, '-')}-specimen.jpg`} target="_blank" rel="noreferrer" title="Fictional specimen ID card used for this demo profile">
+                <img src={`/demo/id-card-${profile.fullName.toLowerCase().replace(/\s+/g, '-')}-specimen.jpg`} alt="Fictional specimen ID card" />
+              </a>
+            )}
           </section>
 
           <section className="card">

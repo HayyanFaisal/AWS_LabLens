@@ -156,6 +156,7 @@ export default function ReportList({ onOpen, onScan, profileName }: { onOpen: (i
                 <div className="rc-foot">
                   <span className="chip">{r.mode === 'async' ? 'PDF · async job' : 'Image · sync call'}</span>
                   <span className="chip">{r.pages ?? 1} page{(r.pages ?? 1) > 1 ? 's' : ''}</span>
+                  {r.demo && <span className="chip demo">Demo data</span>}
                   <button className="icon-btn danger" title="Delete report" aria-label="Delete report"
                     onClick={(e) => { e.stopPropagation(); remove(r); }}>
                     <Icon name="trash" size={16} />

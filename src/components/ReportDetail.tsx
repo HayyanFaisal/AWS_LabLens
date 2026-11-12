@@ -70,7 +70,7 @@ export default function ReportDetail({ reportId, onBack, profile }: { reportId: 
               {match === 'mismatch' && <span className="chip warn">not {profile.fullName}</span>}
             </span>
             {ageAtTest != null && match !== 'mismatch' && <span><Icon name="calendar" size={15} /> Age at test: {ageAtTest}</span>}
-            <span className="no-print"><Icon name="scan" size={15} /> {report.pages ?? 1} page(s) · Textract {report.mode === 'async' ? 'async job' : 'sync call'} · {report.blockCount ?? '–'} blocks</span>
+            <span className="no-print"><Icon name="scan" size={15} /> {report.pages ?? 1} page(s) · {report.demo ? 'demo sample' : <>Textract {report.mode === 'async' ? 'async job' : 'sync call'} · {report.blockCount ?? '–'} blocks</>}</span>
           </div>
         </div>
         <div className="stat-row compact">
@@ -79,6 +79,12 @@ export default function ReportDetail({ reportId, onBack, profile }: { reportId: 
           <div className={`stat ${lowConf ? 'warn' : ''}`}><Icon name="scan" /><div className="stat-value num">{lowConf}</div><div className="stat-label">low confidence</div></div>
         </div>
       </header>
+
+      {report.demo && (
+        <div className="demo-banner no-print">
+          <Icon name="info" size={16} /> Demo report: the rows of this sample file are preloaded and flagged by LabLens's own rules. Upload a file on Scan report to see Amazon Textract read it live (with confidence scores).
+        </div>
+      )}
 
       {!!report.warnings?.length && (
         <ul className="warnings no-print">
@@ -152,7 +158,7 @@ export default function ReportDetail({ reportId, onBack, profile }: { reportId: 
               <label className="switch small">
                 <input type="checkbox" checked={showBoxes} onChange={(e) => setShowBoxes(e.target.checked)} />
                 <span className="switch-track"><span className="switch-thumb" /></span>
-                Textract boxes
+                {report.demo ? 'Row boxes' : 'Textract boxes'}
               </label>
             )}
           </div>

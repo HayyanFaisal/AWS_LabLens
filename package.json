@@ -11,7 +11,8 @@
     "test:parser": "tsx amplify/functions/api/parser.test.ts",
     "test:api": "tsx amplify/functions/api/api.test.ts",
     "test:profile": "tsx amplify/functions/api/profile.test.ts",
-    "test": "npm run test:parser --silent && npm run test:api --silent && npm run test:profile --silent",
+    "test:demo": "tsx amplify/functions/api/demo.test.ts",
+    "test": "npm run test:parser --silent && npm run test:api --silent && npm run test:profile --silent && npm run test:demo --silent",
     "typecheck": "tsc --noEmit -p amplify/tsconfig.json && tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {

@@ -1,0 +1,1399 @@
+{
+ "report-5-dec-2025-old-scan.jpg": {
+  "lab": "Demo Diagnostics Laboratory",
+  "patient": "Ali Raza",
+  "date": "10/12/2025",
+  "collected": "09/12/2025",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 4,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "10.8",
+    "unit": "g/dL",
+    "rangeText": "13.0 - 17.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1003593182519936,
+     "top": 0.27472776655679426,
+     "width": 0.6933747900198141,
+     "height": 0.03047444297494829
+    }
+   },
+   {
+    "testName": "WBC Count",
+    "rawValue": "8,100",
+    "unit": "/uL",
+    "rangeText": "4,000 - 11,000",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10091133712199254,
+     "top": 0.30267449550761133,
+     "width": 0.7209305187830781,
+     "height": 0.03074912347816449
+    }
+   },
+   {
+    "testName": "Platelet Count",
+    "rawValue": "470",
+    "unit": "x10^3/uL",
+    "rangeText": "150 - 400",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1014633559919915,
+     "top": 0.331261493958808,
+     "width": 0.6842549224931822,
+     "height": 0.030383534481001208
+    }
+   },
+   {
+    "testName": "Fasting Blood Glucose",
+    "rawValue": "141",
+    "unit": "mg/dL",
+    "rangeText": "70 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10316589840156729,
+     "top": 0.41839317055835257,
+     "width": 0.6751350549665504,
+     "height": 0.030292625987054223
+    }
+   },
+   {
+    "testName": "HbA1c",
+    "rawValue": "7.6",
+    "unit": "%",
+    "rangeText": "4.0 - 5.6",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10371791727156625,
+     "top": 0.44661458001238596,
+     "width": 0.6751350549665504,
+     "height": 0.030292625987054223
+    }
+   },
+   {
+    "testName": "Serum Creatinine",
+    "rawValue": "1.1",
+    "unit": "mg/dL",
+    "rangeText": "0.7 - 1.3",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1042699361415652,
+     "top": 0.47483598946641925,
+     "width": 0.6751350549665504,
+     "height": 0.030292625987054223
+    }
+   },
+   {
+    "testName": "ALT (SGPT)",
+    "rawValue": "68",
+    "unit": "U/L",
+    "rangeText": "7 - 56",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1048219550115642,
+     "top": 0.5032401934190343,
+     "width": 0.6567972568216022,
+     "height": 0.030109831488472648
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "11",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10537397388156315,
+     "top": 0.5312788083744859,
+     "width": 0.6751350549665504,
+     "height": 0.030292625987054286
+    }
+   },
+   {
+    "testName": "Total Cholesterol",
+    "rawValue": "251",
+    "unit": "mg/dL",
+    "rangeText": "< 200",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10707651629113894,
+     "top": 0.6185072585321031,
+     "width": 0.6563069413631811,
+     "height": 0.030104943935034618
+    }
+   },
+   {
+    "testName": "LDL Cholesterol",
+    "rawValue": "171",
+    "unit": "mg/dL",
+    "rangeText": "< 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1076285351611379,
+     "top": 0.6467286679861366,
+     "width": 0.6563069413631811,
+     "height": 0.030104943935034618
+    }
+   },
+   {
+    "testName": "HDL Cholesterol",
+    "rawValue": "36",
+    "unit": "mg/dL",
+    "rangeText": "> 40",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10818055403113686,
+     "top": 0.675040985934117,
+     "width": 0.6471870738365492,
+     "height": 0.030014035441087567
+    }
+   },
+   {
+    "testName": "Triglycerides",
+    "rawValue": "232",
+    "unit": "mg/dL",
+    "rangeText": "< 150",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.10873450980945164,
+     "top": 0.7032705093835158,
+     "width": 0.6563069413631811,
+     "height": 0.030104943935034618
+    }
+   }
+  ]
+ },
+ "report-1-mar-2026.png": {
+  "lab": "Demo Diagnostics Laboratory",
+  "patient": "Ali Raza",
+  "date": "14/03/2026",
+  "collected": "13/03/2026",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 4,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "11.2",
+    "unit": "g/dL",
+    "rangeText": "13.0 - 17.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.7066,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "WBC Count",
+    "rawValue": "7,800",
+    "unit": "/uL",
+    "rangeText": "4,000 - 11,000",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.7347,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Platelet Count",
+    "rawValue": "450",
+    "unit": "x10^3/uL",
+    "rangeText": "150 - 400",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.6973,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Fasting Blood Glucose",
+    "rawValue": "128",
+    "unit": "mg/dL",
+    "rangeText": "70 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4204,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "HbA1c",
+    "rawValue": "7.1",
+    "unit": "%",
+    "rangeText": "4.0 - 5.6",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4489,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Creatinine",
+    "rawValue": "1.0",
+    "unit": "mg/dL",
+    "rangeText": "0.7 - 1.3",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4774,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "ALT (SGPT)",
+    "rawValue": "62",
+    "unit": "U/L",
+    "rangeText": "7 - 56",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5059,
+     "width": 0.6693,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "14",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5344,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Total Cholesterol",
+    "rawValue": "238",
+    "unit": "mg/dL",
+    "rangeText": "< 200",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.6223,
+     "width": 0.6688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "LDL Cholesterol",
+    "rawValue": "162",
+    "unit": "mg/dL",
+    "rangeText": "< 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.6508,
+     "width": 0.6688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "HDL Cholesterol",
+    "rawValue": "38",
+    "unit": "mg/dL",
+    "rangeText": "> 40",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.6793,
+     "width": 0.6595,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Triglycerides",
+    "rawValue": "210",
+    "unit": "mg/dL",
+    "rangeText": "< 150",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.7079,
+     "width": 0.6688,
+     "height": 0.0238
+    }
+   }
+  ]
+ },
+ "report-2-jun-2026.jpg": {
+  "lab": "Demo Diagnostics Laboratory",
+  "patient": "Ali Raza",
+  "date": "16/06/2026",
+  "collected": "15/06/2026",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 4,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "12.4",
+    "unit": "g/dL",
+    "rangeText": "13.0 - 17.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.15104134910705513,
+     "top": 0.28659355696116984,
+     "width": 0.6239652068399621,
+     "height": 0.033930495289337545
+    }
+   },
+   {
+    "testName": "WBC Count",
+    "rawValue": "8,200",
+    "unit": "/uL",
+    "rangeText": "4,000 - 11,000",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.15011031439264916,
+     "top": 0.3128136953326863,
+     "width": 0.6487480750599772,
+     "height": 0.0344090773309583
+    }
+   },
+   {
+    "testName": "Platelet Count",
+    "rawValue": "390",
+    "unit": "x10^3/uL",
+    "rangeText": "150 - 400",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.14917927967824315,
+     "top": 0.3390338337042028,
+     "width": 0.6157630476070036,
+     "height": 0.033772103368089355
+    }
+   },
+   {
+    "testName": "Fasting Blood Glucose",
+    "rawValue": "112",
+    "unit": "mg/dL",
+    "rangeText": "70 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1463077726117068,
+     "top": 0.4199022604710905,
+     "width": 0.6075608883740449,
+     "height": 0.033613711446841235
+    }
+   },
+   {
+    "testName": "HbA1c",
+    "rawValue": "6.4",
+    "unit": "%",
+    "rangeText": "4.0 - 5.6",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.14537673789730082,
+     "top": 0.446122398842607,
+     "width": 0.607560888374045,
+     "height": 0.033613711446841235
+    }
+   },
+   {
+    "testName": "Serum Creatinine",
+    "rawValue": "1.1",
+    "unit": "mg/dL",
+    "rangeText": "0.7 - 1.3",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.14444570318289482,
+     "top": 0.4723425372141235,
+     "width": 0.6075608883740449,
+     "height": 0.033613711446841235
+    }
+   },
+   {
+    "testName": "ALT (SGPT)",
+    "rawValue": "48",
+    "unit": "U/L",
+    "rangeText": "7 - 56",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.14351466846848884,
+     "top": 0.49856267558564,
+     "width": 0.591068374647558,
+     "height": 0.03329522446540682
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "22",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.14258363375408284,
+     "top": 0.5247828139571564,
+     "width": 0.607560888374045,
+     "height": 0.03361371144684135
+    }
+   },
+   {
+    "testName": "Total Cholesterol",
+    "rawValue": "215",
+    "unit": "mg/dL",
+    "rangeText": "< 200",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1397121266875465,
+     "top": 0.6056512407240441,
+     "width": 0.5906273983447108,
+     "height": 0.03328670877071602
+    }
+   },
+   {
+    "testName": "LDL Cholesterol",
+    "rawValue": "140",
+    "unit": "mg/dL",
+    "rangeText": "< 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.1387810919731405,
+     "top": 0.6318713790955607,
+     "width": 0.5906273983447109,
+     "height": 0.03328670877071602
+    }
+   },
+   {
+    "testName": "HDL Cholesterol",
+    "rawValue": "42",
+    "unit": "mg/dL",
+    "rangeText": "> 40",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.13785005725873453,
+     "top": 0.6580915174670773,
+     "width": 0.582425239111752,
+     "height": 0.03312831684946795
+    }
+   },
+   {
+    "testName": "Triglycerides",
+    "rawValue": "180",
+    "unit": "mg/dL",
+    "rangeText": "< 150",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.13691575575585696,
+     "top": 0.6844036563241077,
+     "width": 0.5906273983447108,
+     "height": 0.03328670877071602
+    }
+   }
+  ]
+ },
+ "report-3-sep-2026.pdf": {
+  "lab": "Demo Diagnostics Laboratory",
+  "patient": "Ali Raza",
+  "date": "18/09/2026",
+  "collected": "17/09/2026",
+  "pages": 2,
+  "mode": "async",
+  "tables": 5,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "13.6",
+    "unit": "g/dL",
+    "rangeText": "13.0 - 17.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.7066,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "WBC Count",
+    "rawValue": "6,900",
+    "unit": "/uL",
+    "rangeText": "4,000 - 11,000",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.7347,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Platelet Count",
+    "rawValue": "310",
+    "unit": "x10^3/uL",
+    "rangeText": "150 - 400",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.6973,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Fasting Blood Glucose",
+    "rawValue": "98",
+    "unit": "mg/dL",
+    "rangeText": "70 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4204,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "HbA1c",
+    "rawValue": "5.8",
+    "unit": "%",
+    "rangeText": "4.0 - 5.6",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4489,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Creatinine",
+    "rawValue": "0.9",
+    "unit": "mg/dL",
+    "rangeText": "0.7 - 1.3",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4774,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "ALT (SGPT)",
+    "rawValue": "35",
+    "unit": "U/L",
+    "rangeText": "7 - 56",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5059,
+     "width": 0.6693,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "34",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5344,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Total Cholesterol",
+    "rawValue": "190",
+    "unit": "mg/dL",
+    "rangeText": "< 200",
+    "labFlag": null,
+    "page": 2,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.6688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "LDL Cholesterol",
+    "rawValue": "118",
+    "unit": "mg/dL",
+    "rangeText": "< 100",
+    "labFlag": null,
+    "page": 2,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.6688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "HDL Cholesterol",
+    "rawValue": "47",
+    "unit": "mg/dL",
+    "rangeText": "> 40",
+    "labFlag": null,
+    "page": 2,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.6595,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Triglycerides",
+    "rawValue": "140",
+    "unit": "mg/dL",
+    "rangeText": "< 150",
+    "labFlag": null,
+    "page": 2,
+    "box": {
+     "left": 0.0969,
+     "top": 0.361,
+     "width": 0.6688,
+     "height": 0.0238
+    }
+   }
+  ]
+ },
+ "report-6-oct-2026-liver.pdf": {
+  "lab": "Northside Medical Lab",
+  "patient": "Ali Raza",
+  "date": "22-Oct-2026",
+  "collected": "21-Oct-2026",
+  "pages": 1,
+  "mode": "async",
+  "tables": 3,
+  "rows": [
+   {
+    "testName": "Total Bilirubin",
+    "rawValue": "0.8",
+    "unit": "mg/dL",
+    "rangeText": "0.3 - 1.2",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Direct Bilirubin",
+    "rawValue": "0.2",
+    "unit": "mg/dL",
+    "rangeText": "Up to 0.3",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.6945,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "ALT (SGPT)",
+    "rawValue": "31",
+    "unit": "U/L",
+    "rangeText": "7 - 56",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.6693,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "AST (SGOT)",
+    "rawValue": "28",
+    "unit": "U/L",
+    "rangeText": "5 - 40",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.361,
+     "width": 0.6693,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Alkaline Phosphatase",
+    "rawValue": "96",
+    "unit": "U/L",
+    "rangeText": "44 - 147",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3895,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Gamma GT",
+    "rawValue": "64",
+    "unit": "U/L",
+    "rangeText": "Up to 55",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.418,
+     "width": 0.6898,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Total Protein",
+    "rawValue": "7.1",
+    "unit": "g/dL",
+    "rangeText": "6.0 - 8.3",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.4465,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Albumin",
+    "rawValue": "4.3",
+    "unit": "g/dL",
+    "rangeText": "3.5 - 5.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.475,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "HBsAg",
+    "rawValue": "Non-Reactive",
+    "unit": null,
+    "rangeText": "Non-Reactive",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5629,
+     "width": 0.7281,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Anti-HCV",
+    "rawValue": "Non-Reactive",
+    "unit": null,
+    "rangeText": "Non-Reactive",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5915,
+     "width": 0.7281,
+     "height": 0.0238
+    }
+   }
+  ]
+ },
+ "report-4-nov-2026-thyroid.png": {
+  "lab": "City Care Pathology",
+  "patient": "Ali Raza",
+  "date": "05 Nov 2026",
+  "collected": "04 Nov 2026",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 3,
+  "rows": [
+   {
+    "testName": "TSH",
+    "rawValue": "5.8",
+    "unit": "uIU/mL",
+    "rangeText": "0.4 to 4.0",
+    "labFlag": "H",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.2755,
+     "width": 0.7623,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Free T4",
+    "rawValue": "1.0",
+    "unit": "ng/dL",
+    "rangeText": "0.8 to 1.8",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.304,
+     "width": 0.5488,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Free T3",
+    "rawValue": "3.1",
+    "unit": "pg/mL",
+    "rangeText": "2.3 to 4.2",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.3325,
+     "width": 0.5488,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Fasting Blood Glucose",
+    "rawValue": "94",
+    "unit": "mg/dL",
+    "rangeText": "70 to 100",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.4204,
+     "width": 0.5488,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "HbA1c",
+    "rawValue": "5.6",
+    "unit": "%",
+    "rangeText": "4.0 to 5.6",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.4489,
+     "width": 0.5488,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Creatinine",
+    "rawValue": "0.9",
+    "unit": "mg/dL",
+    "rangeText": "0.7 to 1.3",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.4774,
+     "width": 0.5488,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Blood Urea",
+    "rawValue": "38",
+    "unit": "mg/dL",
+    "rangeText": "15 to 40",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.5059,
+     "width": 0.5394,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Uric Acid",
+    "rawValue": "7.4",
+    "unit": "mg/dL",
+    "rangeText": "Up to 7.0",
+    "labFlag": "H",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.5344,
+     "width": 0.7623,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Sodium",
+    "rawValue": "139",
+    "unit": "mmol/L",
+    "rangeText": "135 to 145",
+    "labFlag": "",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.5629,
+     "width": 0.5581,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Potassium",
+    "rawValue": "3.3",
+    "unit": "mmol/L",
+    "rangeText": "3.5 to 5.1",
+    "labFlag": "L",
+    "page": 1,
+    "box": {
+     "left": 0.1017,
+     "top": 0.5915,
+     "width": 0.7595,
+     "height": 0.0238
+    }
+   }
+  ]
+ },
+ "not-a-lab-report-invoice.png": {
+  "lab": null,
+  "patient": null,
+  "date": "02/11/2026",
+  "collected": null,
+  "pages": 1,
+  "mode": "sync",
+  "tables": 2,
+  "rows": []
+ },
+ "report-7-sara-khan-mar-2026.png": {
+  "lab": "Crescent Diagnostic Centre",
+  "patient": "Sara Khan",
+  "date": "Mar 08, 2026",
+  "collected": "Mar 07, 2026",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 3,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "10.9",
+    "unit": "g/dL",
+    "rangeText": "12.0 - 15.5",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.7066,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "RBC Count",
+    "rawValue": "4.1",
+    "unit": "million/uL",
+    "rangeText": "4.2 - 5.4",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "MCV",
+    "rawValue": "74",
+    "unit": "fL",
+    "rangeText": "80 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Ferritin",
+    "rawValue": "8",
+    "unit": "ng/mL",
+    "rangeText": "15 - 150",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.361,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Iron",
+    "rawValue": "42",
+    "unit": "ug/dL",
+    "rangeText": "60 - 170",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3895,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin B12",
+    "rawValue": "310",
+    "unit": "pg/mL",
+    "rangeText": "200 - 900",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.418,
+     "width": 0.6973,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "TSH",
+    "rawValue": "2.1",
+    "unit": "uIU/mL",
+    "rangeText": "0.4 - 4.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5059,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "18",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5344,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   }
+  ]
+ },
+ "report-8-sara-khan-jun-2026.png": {
+  "lab": "Crescent Diagnostic Centre",
+  "patient": "Sara Khan",
+  "date": "Jun 12, 2026",
+  "collected": "Jun 11, 2026",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 3,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "11.8",
+    "unit": "g/dL",
+    "rangeText": "12.0 - 15.5",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.7066,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "RBC Count",
+    "rawValue": "4.3",
+    "unit": "million/uL",
+    "rangeText": "4.2 - 5.4",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "MCV",
+    "rawValue": "78",
+    "unit": "fL",
+    "rangeText": "80 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Ferritin",
+    "rawValue": "19",
+    "unit": "ng/mL",
+    "rangeText": "15 - 150",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.361,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Iron",
+    "rawValue": "58",
+    "unit": "ug/dL",
+    "rangeText": "60 - 170",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3895,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin B12",
+    "rawValue": "330",
+    "unit": "pg/mL",
+    "rangeText": "200 - 900",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.418,
+     "width": 0.6973,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "TSH",
+    "rawValue": "2.3",
+    "unit": "uIU/mL",
+    "rangeText": "0.4 - 4.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5059,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "26",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5344,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   }
+  ]
+ },
+ "report-9-sara-khan-sep-2026.png": {
+  "lab": "Crescent Diagnostic Centre",
+  "patient": "Sara Khan",
+  "date": "Sep 15, 2026",
+  "collected": "Sep 14, 2026",
+  "pages": 1,
+  "mode": "sync",
+  "tables": 3,
+  "rows": [
+   {
+    "testName": "Hemoglobin",
+    "rawValue": "12.6",
+    "unit": "g/dL",
+    "rangeText": "12.0 - 15.5",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.2755,
+     "width": 0.7066,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "RBC Count",
+    "rawValue": "4.5",
+    "unit": "million/uL",
+    "rangeText": "4.2 - 5.4",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.304,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "MCV",
+    "rawValue": "82",
+    "unit": "fL",
+    "rangeText": "80 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3325,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Ferritin",
+    "rawValue": "34",
+    "unit": "ng/mL",
+    "rangeText": "15 - 150",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.361,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Serum Iron",
+    "rawValue": "75",
+    "unit": "ug/dL",
+    "rangeText": "60 - 170",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.3895,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin B12",
+    "rawValue": "345",
+    "unit": "pg/mL",
+    "rangeText": "200 - 900",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.418,
+     "width": 0.6973,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "TSH",
+    "rawValue": "2.0",
+    "unit": "uIU/mL",
+    "rangeText": "0.4 - 4.0",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5059,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   },
+   {
+    "testName": "Vitamin D (25-OH)",
+    "rawValue": "38",
+    "unit": "ng/mL",
+    "rangeText": "30 - 100",
+    "labFlag": null,
+    "page": 1,
+    "box": {
+     "left": 0.0969,
+     "top": 0.5344,
+     "width": 0.688,
+     "height": 0.0238
+    }
+   }
+  ]
+ }
+}

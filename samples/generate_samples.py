@@ -161,25 +161,30 @@ def liver_story():
     return story + footer_block()
 
 
-def sara_story():
+SARA = dict(name="Sara Khan", age="27 Years / Female", doctor="Dr. Imran Shah")
+# Sara's anaemia improves on iron supplements. Columns: Mar, Jun, Sep 2026.
+SARA_ANAEMIA = [
+    ("Hemoglobin", "g/dL", "12.0 - 15.5", ["10.9", "11.8", "12.6"]),
+    ("RBC Count", "million/uL", "4.2 - 5.4", ["4.1", "4.3", "4.5"]),
+    ("MCV", "fL", "80 - 100", ["74", "78", "82"]),
+    ("Serum Ferritin", "ng/mL", "15 - 150", ["8", "19", "34"]),
+    ("Serum Iron", "ug/dL", "60 - 170", ["42", "58", "75"]),
+    ("Vitamin B12", "pg/mL", "200 - 900", ["310", "330", "345"]),
+]
+SARA_OTHER = [
+    ("TSH", "uIU/mL", "0.4 - 4.0", ["2.1", "2.3", "2.0"]),
+    ("Vitamin D (25-OH)", "ng/mL", "30 - 100", ["18", "26", "38"]),
+]
+
+
+def sara_story(idx=0, date="Mar 08, 2026", collected="Mar 07, 2026", lab_no="CDC-2603-118"):
     """Second patient (use with a second account), US-style date 'Mar 08, 2026'."""
     lab = ("Crescent Diagnostic Centre", "3 Garden Avenue · Fictional laboratory for testing")
-    sara = dict(name="Sara Khan", age="27 Years / Female", doctor="Dr. Imran Shah")
     head = ["Test Description", "Value", "Unit", "Ref. Range"]
     accent = "#8a4b08"
-    story = header(lab, sara, "CDC-2603-118", "Report Date", "Mar 08, 2026", "Mar 07, 2026", accent)
-    story += results_table("ANAEMIA PANEL", head, [
-        ["Hemoglobin", "10.9", "g/dL", "12.0 - 15.5"],
-        ["RBC Count", "4.1", "million/uL", "4.2 - 5.4"],
-        ["MCV", "74", "fL", "80 - 100"],
-        ["Serum Ferritin", "8", "ng/mL", "15 - 150"],
-        ["Serum Iron", "42", "ug/dL", "60 - 170"],
-        ["Vitamin B12", "310", "pg/mL", "200 - 900"],
-    ], accent, "#f6e7d3")
-    story += results_table("OTHER", head, [
-        ["TSH", "2.1", "uIU/mL", "0.4 - 4.0"],
-        ["Vitamin D (25-OH)", "18", "ng/mL", "30 - 100"],
-    ], accent, "#f6e7d3")
+    story = header(lab, SARA, lab_no, "Report Date", date, collected, accent)
+    story += results_table("ANAEMIA PANEL", head, rows_for(SARA_ANAEMIA, idx), accent, "#f6e7d3")
+    story += results_table("OTHER", head, rows_for(SARA_OTHER, idx), accent, "#f6e7d3")
     return story + footer_block()
 
 
@@ -252,7 +257,7 @@ def old_scan(img: Image.Image) -> Image.Image:
     return img.rotate(0.8, expand=True, fillcolor=200).convert("RGB")
 
 
-def id_card(path):
+def id_card(path, person=None):
     """
     A FICTIONAL identity card for the sign-up "Scan your ID card" step.
     It is clearly marked SPECIMEN and copies no real government design.
@@ -278,7 +283,7 @@ def id_card(path):
     d.rounded_rectangle([40, 130, 290, 440], radius=12, fill="#dfe6df", outline="#9fb3a8", width=2)
     d.ellipse([115, 170, 215, 270], fill="#a9bab0")
     d.rounded_rectangle([85, 285, 245, 420], radius=60, fill="#a9bab0")
-    fields = [
+    fields = person or [
         ("Name", "ALI RAZA"),
         ("Father Name", "RAZA AHMED"),
         ("Gender", "M"),
@@ -301,11 +306,33 @@ def id_card(path):
     photo.save(path, quality=88)
 
 
+# Sara's follow-up reports (generated with: python samples/generate_samples.py sara)
+SARA_EXTRA = {
+    "report-8-sara-khan-jun-2026.png": (1, "Jun 12, 2026", "Jun 11, 2026", "CDC-2606-204"),
+    "report-9-sara-khan-sep-2026.png": (2, "Sep 15, 2026", "Sep 14, 2026", "CDC-2609-317"),
+}
+
+
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == "id":
-        path = os.path.join(OUT, "id-card-ali-raza-specimen.jpg")
-        id_card(path)
-        print(f"  {os.path.basename(path):36s} {os.path.getsize(path) // 1024:5d} KB")
+        cards = {
+            "id-card-ali-raza-specimen.jpg": None,
+            "id-card-sara-khan-specimen.jpg": [
+                ("Name", "SARA KHAN"), ("Father Name", "KAMRAN KHAN"), ("Gender", "F"),
+                ("Country of Stay", "DEMOLAND"), ("Identity Number", "00000-7654321-8"),
+                ("Date of Birth", "14.08.1999"), ("Date of Expiry", "01.06.2033"),
+            ],
+        }
+        for name, person in cards.items():
+            path = os.path.join(OUT, name)
+            id_card(path, person)
+            print(f"  {name:36s} {os.path.getsize(path) // 1024:5d} KB")
+        return
+    if len(sys.argv) > 1 and sys.argv[1] == "sara":
+        for name, args in SARA_EXTRA.items():
+            path = os.path.join(OUT, name)
+            render_png(sara_story(*args)).save(path, optimize=True)
+            print(f"  {name:36s} {os.path.getsize(path) // 1024:5d} KB")
         return
     jobs = [
         ("report-1-mar-2026.png", lambda: ali_story(0, "14/03/2026", "13/03/2026", "DL-26-03114"), "png"),

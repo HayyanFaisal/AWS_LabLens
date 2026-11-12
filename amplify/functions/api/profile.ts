@@ -27,12 +27,12 @@ export async function getProfile(username: string) {
     new GetCommand({
       TableName: env.usersTable(),
       Key: { username },
-      ProjectionExpression: '#u, #c, #p',
-      ExpressionAttributeNames: { '#u': 'username', '#c': 'createdAt', '#p': 'profile' },
+      ProjectionExpression: '#u, #c, #p, #d',
+      ExpressionAttributeNames: { '#u': 'username', '#c': 'createdAt', '#p': 'profile', '#d': 'demo' },
     }),
   );
   if (!Item) throw new HttpError(401, 'Please sign in again');
-  return { username, createdAt: Item.createdAt ?? null, profile: Item.profile ?? null };
+  return { username, createdAt: Item.createdAt ?? null, profile: Item.profile ?? null, demo: Item.demo === true };
 }
 
 // ---------- PUT /profile ----------

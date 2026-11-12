@@ -2,6 +2,7 @@
 import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { ddb, env } from './aws';
 import { credentialProblem, hashPassword, signToken, verifyPassword } from './auth';
+import { DEMO_PREFIX } from './demo';
 import { HttpError, str } from './http';
 
 const INVALID_LOGIN = 'Invalid username or password';
@@ -11,6 +12,7 @@ export async function register(body: Record<string, unknown>) {
   const password = str(body, 'password', 200);
   const problem = credentialProblem(username, password);
   if (problem) throw new HttpError(400, problem);
+  if (username.startsWith(DEMO_PREFIX)) throw new HttpError(400, 'Usernames starting with "demo_" are reserved for the demo profiles');
 
   const { salt, passwordHash } = await hashPassword(password);
   try {
