@@ -542,7 +542,8 @@ input, select { font: inherit; color: inherit; }
 .filter-chips button.on { background: var(--ink); border-color: var(--ink); color: #fff; }
 .filter-chips button.on span { background: rgba(255, 255, 255, 0.18); }
 
-.report-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1rem; }
+.report-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1rem; }
+.report-card { min-width: 0; }
 .report-card {
   position: relative; overflow: hidden; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.2rem 1.05rem 1.45rem; display: grid; gap: 0.4rem; cursor: pointer;
@@ -554,7 +555,7 @@ input, select { font: inherit; color: inherit; }
 .report-card.failed::before { background: var(--faint); }
 @media (hover: hover) and (pointer: fine) { .report-card:not(.failed):hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--line-2); } }
 .report-card.failed { cursor: default; background: var(--surface-2); }
-.rc-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+.rc-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
 .rc-date { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.84rem; color: var(--muted); font-weight: 550; }
 .rc-title { font-weight: 700; color: var(--ink); font-size: 1.08rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rc-patient { display: flex; align-items: center; gap: 0.35rem; font-size: 0.88rem; color: var(--text); }
@@ -563,7 +564,7 @@ input, select { font: inherit; color: inherit; }
 .rc-meter-bar .ok { background: var(--green-500); }
 .rc-meter-bar .bad { background: var(--red-500); }
 .rc-error { margin-top: 0.3rem; font-size: 0.84rem; color: var(--red); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-.rc-foot { display: flex; align-items: center; gap: 0.4rem; margin-top: 0.55rem; }
+.rc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.55rem; }
 .rc-foot .icon-btn { margin-left: auto; }
 .status { font-size: 0.74rem; font-weight: 700; padding: 0.18rem 0.6rem; border-radius: 999px; }
 .status.done { background: var(--green-soft); color: var(--green); }
