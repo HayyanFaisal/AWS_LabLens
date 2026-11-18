@@ -26,7 +26,9 @@ export const ALLOWED_TYPES: Record<string, string> = {
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 export const MAX_REPORTS_PER_USER = 50;
 export const MIN_TESTS = 3;
-export const LOW_CONFIDENCE = 90;
+// Textract table-cell confidence is typically 85-95% even when the read is right,
+// so only clearly uncertain reads (under 80%) get a warning.
+export const LOW_CONFIDENCE = 80;
 
 export function extensionOf(fileName: string): string {
   return (fileName.match(/\.([a-z0-9]+)$/i)?.[1] ?? '').toLowerCase();

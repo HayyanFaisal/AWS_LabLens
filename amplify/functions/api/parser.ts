@@ -118,6 +118,11 @@ export function parseRange(raw: string | null | undefined): {
   const between = s.match(new RegExp(`${num}\\s*(?:-|to)\\s*${num}`, 'i'));
   if (between) return { low: Number(between[1]), high: Number(between[2]) };
 
+  // Textract sometimes drops a thin dash: "13.0 - 17.0" comes back as "13.0 17.0".
+  // Two numbers and nothing else, rising, is still a low-high range.
+  const pair = s.match(new RegExp(`^${num}\\s+${num}$`));
+  if (pair && Number(pair[1]) < Number(pair[2])) return { low: Number(pair[1]), high: Number(pair[2]) };
+
   const upper = s.match(
     new RegExp(`^(?:<=?|≤|less than|up\\s*to|upto|below)\\s*${num}`, 'i'),
   );

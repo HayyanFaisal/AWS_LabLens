@@ -333,10 +333,11 @@ def id_card(person, path):
             row = y + i * 100
         d.text((col, row), label, font=font(21), fill="#2f5d44")
         d.text((col, row + 28), value, font=font(30, True), fill="#111111")
-    # big diagonal SPECIMEN watermark
+    # big SPECIMEN watermark in the empty band under the fields, so it never covers
+    # data Textract has to read (it used to hide the date of birth)
     wm = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-    ImageDraw.Draw(wm).text((150, 330), "SPECIMEN", font=font(140, True), fill=(180, 30, 30, 70))
-    card = Image.alpha_composite(card.convert("RGBA"), wm.rotate(14, center=(w // 2, h // 2))).convert("RGB")
+    ImageDraw.Draw(wm).text((40, 440), "SPECIMEN", font=font(120, True), fill=(180, 30, 30, 80))
+    card = Image.alpha_composite(card.convert("RGBA"), wm).convert("RGB")
     d = ImageDraw.Draw(card)
     d.text((40, h - 52), "LabLens demo card · dummy number · no government design elements", font=font(18), fill="#4b6b57")
     photo = card.rotate(-1.8, expand=True, fillcolor=(196, 190, 178))

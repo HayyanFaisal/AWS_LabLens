@@ -6,7 +6,7 @@ import { PANELS, testInfo, type PanelId } from '../lib/testLibrary';
 import type { Profile, Report, TestResult } from '../types';
 import { FlagBadge, Icon, OrganIcon, RangeBar, Spinner } from './ui';
 
-const LOW_CONFIDENCE = 90;
+const LOW_CONFIDENCE = 80; // same threshold as the API (rules.ts)
 type Row = TestResult & { index: number; panel: PanelId };
 
 export default function ReportDetail({ reportId, onBack, profile }: { reportId: string; onBack: () => void; profile: Profile }) {

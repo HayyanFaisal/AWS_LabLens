@@ -58,6 +58,9 @@ function makeQuery(alias: string, question: string, answer: string, blocks: TBlo
 
 // ---- unit helpers ----
 assert.deepEqual(parseRange('13.0 - 17.0'), { low: 13, high: 17 });
+assert.deepEqual(parseRange('13.0 17.0'), { low: 13, high: 17 }, 'Textract dropped the dash');
+assert.deepEqual(parseRange('70 99'), { low: 70, high: 99 });
+assert.deepEqual(parseRange('17.0 13.0'), { low: null, high: null }, 'falling pair is not a range');
 assert.deepEqual(parseRange('0.5 to 1.2'), { low: 0.5, high: 1.2 });
 assert.deepEqual(parseRange('4,000 – 11,000'), { low: 4000, high: 11000 });
 assert.deepEqual(parseRange('< 200'), { low: null, high: 200 });
